@@ -52,9 +52,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     username = models.CharField(max_length=40, unique=True)
     email = models.EmailField(unique=True)
-    mob_no = models.CharField(max_length=12, unique=True, default='')
+    mob_no = models.CharField(max_length=12, default='')
     date_joined = models.DateField(default=timezone.now)
-    last_login = models.DateField(null=True)
+    last_login = models.DateTimeField(null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
