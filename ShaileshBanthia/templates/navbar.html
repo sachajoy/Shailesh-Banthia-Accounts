@@ -23,7 +23,8 @@
                       {{ user.username}}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profile">
-                      <li><a class="dropdown-item" type="button" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item" type="button" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item" type="button" href="{% url 'password_change' %}">Change Password</a></li>
                     </ul>
                   </div>
             </span>
