@@ -11,8 +11,8 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link {% if dashboard %} active {% endif %}" 
-                    aria-current="page" href="{% url 'ledger:index' %}">Dashboard</a>
+                    <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
+                        href="{% url 'ledger:index' %}">Dashboard</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="firm" role="button" data-bs-toggle="dropdown"
@@ -20,9 +20,21 @@
                         Firm
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="firm">
-                        <li><a class="dropdown-item" href="{% url 'ledger:create-firm' %}">
-                            Add New
-                        </a></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'ledger:create-firm' %}">
+                                Add New
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'ledger:list-firm' %}">
+                                List of Firms
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'ledger:list-firm' %}">
+                                Update Firm
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

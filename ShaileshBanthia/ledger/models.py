@@ -8,7 +8,7 @@ class Firm(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, default=1)
 
     def get_absolute_url(self):
-        return reverse('ledger:index')
+        return reverse('ledger:list-firm')
 
     def __str__(self):
         return self.abs

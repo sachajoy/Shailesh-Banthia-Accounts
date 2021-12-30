@@ -5,5 +5,7 @@ from .views import firm_views
 app_name = 'ledger'
 urlpatterns = [
     path('', dashboard_view.DashboardListView.as_view(), name='index'),
-    path('create-firm/', firm_views.FirmCreateView.as_view(), name='create-firm')
+    path('create-firm/', firm_views.FirmCreateView.as_view(), name='create-firm'),
+    path('list-firm/', firm_views.FirmListView.as_view(), name='list-firm'),
+    path('update-firm/<int:pk>/', firm_views.FirmUpdateView.as_view(), name='update-firm'),
 ]
