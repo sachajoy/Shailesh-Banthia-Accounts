@@ -1,60 +1,52 @@
 {% extends 'template.html' %}
-{% load static %}
-
-{% block css_link_imports %}
-<!-- <link href="{% static 'DataTables/datables.min.css' %}"> -->
+{% block title %}
+Firm firm_list
 {% endblock %}
+
 {% block content %}
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid px-4">
-            <h1 class="mt-4">Firm List</h1>
+
+<h3 class="mt-1">Firm List</h3>
 
 
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-table me-1"></i>
-                    DataTable Example
-                </div>
-                <div class="card-body">
-                    <table id="firm_list" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Abrevation</th>
-                                <th>Created By</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>Name</th>
-                                <th>Abrevation</th>
-                                <th>Created By</th>
-                                <th>Actions</th>
-                            </tr>
-                        </tfoot>
-                        <thbody>
-                            {% for firm in firms %}
-                            <tr>
-                                <td> {{ firm.name }}</td>
-                                <td> {{ firm.abs }} </td>
-                                <td> {{ firm.created_by }} </td>
-                                <td>
-                                    <a class="btn btn-sm btn-primary" href="{% url 'ledger:update-firm' pk=firm.id %}"> Update</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </thbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        DataTable Example
+    </div>
+    <div class="card-body">
+        <table id="firm_list" class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Abrevation</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Abrevation</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                </tr>
+            </tfoot>
+            <thbody>
+                {% for firm in firms %}
+                <tr>
+                    <td> {{ firm.name }}</td>
+                    <td> {{ firm.abs }} </td>
+                    <td> {{ firm.created_by }} </td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" href="{% url 'ledger:update-firm' pk=firm.id %}">
+                            Update</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </thbody>
+        </table>
+    </div>
 </div>
 
-{% endblock %}
 
-{% block js_script_imports %}
-<!-- <script src="{% static 'DataTables/datatables.min.js' %}"></script> -->
 {% endblock %}
