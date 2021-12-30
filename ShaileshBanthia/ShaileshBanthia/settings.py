@@ -132,5 +132,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = "authentication:index"
+
+LOGIN_REDIRECT_URL = 'authentication:index'
+LOGOUT_REDIRECT_URL = 'authentication:index'
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
 AUTH_USER_MODEL = 'authentication.User'
