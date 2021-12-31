@@ -1,8 +1,10 @@
 from django.views.generic import (
-    CreateView
+    CreateView,
+    DetailView,
+    UpdateView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.urls import reverse
 from .. import models
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
@@ -12,3 +14,22 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.created_by = self.request.user
         return super().form_valid(form)
+
+class ClientDetialView(LoginRequiredMixin, DetailView):
+    model = models.Client
+    template_name = 'ledger/client_details.html'
+    context_object_name = 'client'
+
+
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
+    model = models.Client
+    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
+
+    def form_valid(self, form):
+        form.created_by = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('ledger:detail-client', kwargs= {
+            'pk':self.get_object().id,
+        })

@@ -48,8 +48,13 @@
                                 Add New
                             </a>
                         </li>
+                        {% block client_extra_dropdown_options %}
+                        {% endblock %}
                     </ul>
                 </li>
+                {% block extra_nav_tabs %}
+
+                {% endblock %}
             </ul>
             <span class="navbar-text">
                 <div class="dropdown">

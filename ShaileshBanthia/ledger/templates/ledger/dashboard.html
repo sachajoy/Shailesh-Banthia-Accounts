@@ -1,7 +1,31 @@
 {% extends 'template.html' %}
 
 {% block content %}
-    {% for firm in firms %}
-        <li>{{ firm }}</li>
-    {% endfor %}
+<div class="card mb-4">
+    <div class="card-body">
+        <table id="firm_list" class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    
+                </tr>
+            </tfoot>
+            <thbody>
+                {% for client in clients %}
+                <tr>
+                    <td> {{ client.name }}</td>
+                    <td> {{ client.mobile_number }} </td>
+                </tr>
+                {% endfor %}
+            </thbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

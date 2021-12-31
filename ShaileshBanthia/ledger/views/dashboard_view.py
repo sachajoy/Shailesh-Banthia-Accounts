@@ -3,6 +3,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .. import models
 
 class DashboardListView(LoginRequiredMixin, ListView):
-    model = models.Firm
+    model = models.Client
     template_name = 'ledger/dashboard.html'
-    context_object_name = 'firms'
+    context_object_name = 'clients'

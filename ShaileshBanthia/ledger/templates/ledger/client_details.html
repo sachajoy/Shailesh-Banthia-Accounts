@@ -1,0 +1,60 @@
+{% extends 'template.html' %}
+{% load static %}
+{% block client_extra_dropdown_options %}
+<li>
+    <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
+        Update Client
+    </a>
+</li>
+{% endblock %}
+{% block extra_nav_tabs %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="ledger" role="button" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        Ledger
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="ledger">
+        <li>
+            <a class="dropdown-item" href="#">
+                View Ledger
+            </a>
+        </li>
+    </ul>
+</li>
+{% endblock %}
+{% block content %}
+{{ request.session.user }}
+<h3 class="mt-2">{{ client.name }}
+    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#client_details">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
+            viewBox="0 0 16 16">
+            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+        </svg>
+    </button>
+</h3>
+
+
+<div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Name: {{ client.name }}</p>
+                <p>Mobile Number: {{ client.mobile_number }}</p>
+                <p>
+                    Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
+                <p>Intrest Rate: {{ client.intrest_rate }}</p>
+                <p>Address: {{ client.address }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a type="button" href="{% url 'ledger:update-client' pk=client.id %}" class="btn btn-success">Update</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

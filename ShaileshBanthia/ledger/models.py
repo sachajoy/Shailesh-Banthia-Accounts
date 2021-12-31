@@ -22,7 +22,7 @@ class Client(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, default=1)
 
     def get_absolute_url(self):
-        return reverse('ledger:index')
+        return reverse('ledger:detail-client')
 
     def __str__(self) -> str:
         return "{} - {}".format(self.name, self.mobile_number)
