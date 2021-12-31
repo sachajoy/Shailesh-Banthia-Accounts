@@ -16,8 +16,8 @@ class Firm(models.Model):
 class Client(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False)
     address = models.TextField(null=True)
-    mobile_number = models.CharField(max_length=11, unique=True, null=False)
-    _intrest_status = models.BooleanField(default=False)
+    mobile_number = models.CharField(max_length=11, null=False)
+    intrest_status = models.BooleanField(default=False)
     intrest_rate = models.FloatField(default=0)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, default=1)
 

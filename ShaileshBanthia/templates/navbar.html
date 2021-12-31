@@ -37,6 +37,19 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="firm" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Client
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="firm">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'ledger:create-client' %}">
+                                Add New
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
             <span class="navbar-text">
                 <div class="dropdown">
