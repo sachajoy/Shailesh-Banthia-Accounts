@@ -58,10 +58,13 @@
             </ul>
             <span class="navbar-text">
                 <div class="dropdown">
+                    <a href="{% url 'ledger:set-period' pk=user.id %}">{{ request.session.start_date }} - {{ request.session.end_date }}</a>
+                    &nbsp;
                     <a class="dropdown-toggle" type="button" style="text-decoration: none;" id="profile"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         {{ user.username}}
                     </a>
+                   
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profile">
                         <li><a class="dropdown-item" type="button" href="{% url 'logout' %}">Logout</a></li>
                         <li><a class="dropdown-item" type="button" href="{% url 'password_change' %}">Change

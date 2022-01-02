@@ -6,5 +6,5 @@ from django.contrib.auth import views as auth_view
 urlpatterns = [
     path('', include('ledger.urls', 'ledger')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
 ]

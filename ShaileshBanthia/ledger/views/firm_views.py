@@ -4,12 +4,15 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .. import models
 
+
 class FirmCreateView(LoginRequiredMixin, CreateView):
     model = models.Firm
     fields = ['name', 'abs']
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
         return super().form_valid(form)
 
 
@@ -24,5 +27,7 @@ class FirmUpdateView(LoginRequiredMixin, UpdateView):
     fields = ['name', 'abs']
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
         return super().form_valid(form)

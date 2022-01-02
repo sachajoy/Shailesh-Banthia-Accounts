@@ -12,7 +12,9 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
 
     def form_valid(self, form):
-        form.created_by = self.request.user
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
         return super().form_valid(form)
 
 class ClientDetialView(LoginRequiredMixin, DetailView):
@@ -26,7 +28,9 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
 
     def form_valid(self, form):
-        form.created_by = self.request.user
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
         return super().form_valid(form)
 
     def get_success_url(self):

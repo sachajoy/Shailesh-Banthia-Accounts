@@ -2,6 +2,6 @@ from django import template
 
 register = template.Library()
 
-@register.filter(name='get')
-def get(d, k):
-    return d.get(k, None)
+@register.filter(name='cut')
+def list_index_from_value(list_, value):
+    return list_.index(value)
