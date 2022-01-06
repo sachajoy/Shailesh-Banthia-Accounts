@@ -27,4 +27,5 @@ urlpatterns = [
     path('period-selected-test/', selected_period_view.is_date_set, name='is-period-set'),
     path('set-period/', selected_period_view.SelectPeriodCreateView.as_view(), name='create-period'),
     path('set-period/<int:pk>/', selected_period_view.SelectPeriodUpdateView.as_view(), name='set-period'),
+    path('select-firm', firm_views.select_firm, name='select-firm'),
 ]

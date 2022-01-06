@@ -3,7 +3,7 @@
 {% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Shailesh Banthia</a>
+        <a class="navbar-brand" href="{% url 'ledger:index' %}">Shailesh Banthia</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -59,8 +59,8 @@
             </ul>
             <span class="navbar-text">
                 <div class="dropdown">
-                    <a href="#" style="text-decoration: none;">All Company &nbsp;</a>
-                    <a href="{% url 'ledger:set-period' pk=user.id %}">{{ request.session.start_date }} - {{ request.session.end_date }}</a>
+                    <a href="{% url 'ledger:select-firm' %}" style="text-decoration: none;">{{ request.session.firm_name }}&nbsp;</a>
+                    <a href="{% url 'ledger:set-period' pk=user.id %}" style="text-decoration: none;">{{ request.session.start_date }} - {{ request.session.end_date }}</a>
                     &nbsp;
                     <a class="dropdown-toggle" type="button" style="text-decoration: none;" id="profile"
                         data-bs-toggle="dropdown" aria-expanded="false">

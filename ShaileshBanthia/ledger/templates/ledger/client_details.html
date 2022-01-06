@@ -1,5 +1,6 @@
 {% extends 'template.html' %}
 {% load static %}
+
 {% block client_extra_dropdown_options %}
     <li>
         <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
@@ -113,8 +114,12 @@
             {% endfor %}
         {% endif %}
     </div>
-    <table style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+    <table id="creditTable"
+           style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
            class="table table-condensed table-sm table-striped table-hover table-bordered">
+
+
+        <thead>
         <tr style="color: white;">
             <th style="width: 5%; ">Amount</th>
             <th style="width: 10%;">Sector</th>
@@ -126,8 +131,8 @@
             <th style="width: 5%;">Verifed</th>
             <th style="width: 5%;">Delete</th>
         </tr>
-
-
+        </thead>
+        <tbody>
         {% for trancation in tranctions %}
             {% if trancation.amount > 0 %}
                 <tr>
@@ -158,6 +163,7 @@
                 </tr>
             {% endif %}
         {% endfor %}
+        </tbody>
         <tr>
             <td
                     style="text-align: right;
@@ -177,8 +183,11 @@
         </tr>
 
     </table>
-    <table style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+    <hr />
+    <table id="debitTable"
+           style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
            class="table table-condensed table-sm table-bordered">
+        <thead>
         <tr>
             <th style="width: 5%; ">Amount</th>
             <th style="width: 10%;">Sector</th>
@@ -189,10 +198,9 @@
             <th style="width: 10%">Firm</th>
             <th style="width: 5%;">Verifed</th>
             <th style="width: 5%;">Delete</th>
-
         </tr>
-
-
+        </thead>
+        <tbody>
         {% for trancation in tranctions %}
             {% if trancation.amount < 0 %}
                 <tr>
@@ -225,6 +233,7 @@
                 </tr>
             {% endif %}
         {% endfor %}
+        </tbody>
         <tr style="font-weight: bolder; border: 0px">
             <td
                     style="text-align: right;
@@ -275,5 +284,12 @@
     <script>
         let root = document.getElementById('id_firm')
         root.classList.add("form-control");
+        $(document).ready(function () {
+            $('#creditTable').DataTable();
+        });
+         $(document).ready(function () {
+            $('#debitTable').DataTable();
+        });
+
     </script>
 {% endblock %}

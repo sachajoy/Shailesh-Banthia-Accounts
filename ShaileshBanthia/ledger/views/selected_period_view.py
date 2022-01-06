@@ -21,6 +21,8 @@ def is_date_set(request):
     end_date = selected_peroid_record[0].end_date
     request.session["start_date"] = start_date.strftime('%b %d, %Y')
     request.session["end_date"] = end_date.strftime('%b %d, %Y')
+    request.session["firm_id"] = 0
+    request.session["firm_name"] = "All Company"
     request.session.set_expiry(0)
     return redirect('ledger:index')
 

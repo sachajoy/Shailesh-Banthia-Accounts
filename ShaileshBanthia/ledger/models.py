@@ -45,6 +45,10 @@ class SelectedPeriod(models.Model):
     def get_absolute_url(self):
         return reverse('ledger:is-period-set')
 
+    def clean(self):
+        if self.end_date < self.start_date:
+            raise ValidationError(_("End Date cannot be less than Start Date"))
+
 
 class Trancation(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -60,13 +64,6 @@ class Trancation(models.Model):
 
     class Meta:
         ordering = ['booking_date']
-        # unique_together = [
-        #     [
-        #         'sector', 'amount', 'remarks',
-        #         'date', 'booking_date', 'passenger_list',
-        #         'verifed'
-        #     ]
-        # ]
 
     def __str__(self):
         return "{} - {}".format(self.client, self.date)
@@ -76,15 +73,3 @@ class Trancation(models.Model):
             'client_id': self.client_id
         })
 
-    # def clean(self):
-    #     super(Trancation, self).clean()
-    #     print(self.clean_fields())
-    #     # instance = Trancation.objects.filter(
-    #     #     client_id=self.client, sector=self.sector,
-    #     #     amount=self.amount, date=self.date,
-    #     #     booking_date=self.booking_date,
-    #     #     passenger_list=self.passenger_list,
-    #     #     firm=self.firm,
-    #     # )
-    #     # print(instance)
-    #     raise ValidationError(_('Draft entries may not have a publication date.'))

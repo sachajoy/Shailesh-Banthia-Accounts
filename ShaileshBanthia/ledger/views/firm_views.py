@@ -1,6 +1,9 @@
 from django.views.generic import (
-    CreateView, UpdateView, ListView
+    CreateView, UpdateView, ListView,
+    FormView
 )
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import reverse, render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .. import models
 
@@ -31,3 +34,21 @@ class FirmUpdateView(LoginRequiredMixin, UpdateView):
         self.object.created_by = self.request.user
         self.object.save()
         return super().form_valid(form)
+
+@login_required
+def select_firm(request):
+    if request.method == 'POST':
+        firm_id = request.POST.get('firm')
+        # print(firm_id)
+        if firm_id == 0 or firm_id == "0":
+            request.session['firm_id'] = firm_id
+            request.session['firm_name'] = "All Company"
+            return redirect('ledger:index')
+        firm_name = models.Firm.objects.get(pk=firm_id).name
+        request.session['firm_id'] = firm_id
+        request.session['firm_name'] = firm_name
+        return redirect('ledger:index')
+    firms = models.Firm.objects.all()
+    return render(request, 'ledger/select_firm.html', {
+        'firms':firms
+    })
