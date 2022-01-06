@@ -17,6 +17,11 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         self.object.save()
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse('ledger:detail-client', kwargs= {
+            'pk':self.object.id,
+        })
+
 class ClientDetialView(LoginRequiredMixin, DetailView):
     model = models.Client
     template_name = 'ledger/client_details.html'

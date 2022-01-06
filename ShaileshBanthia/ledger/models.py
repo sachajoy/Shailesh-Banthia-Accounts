@@ -1,8 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import SlugField
 from django.shortcuts import reverse
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
 class Firm(models.Model):
     name = models.CharField(max_length=40, unique=True, null=False)
     abs = models.CharField(max_length=40, unique=True, null=False)
@@ -14,6 +16,7 @@ class Firm(models.Model):
     def __str__(self):
         return self.abs
 
+
 class Client(models.Model):
     name = models.CharField(max_length=255, unique=True, null=False)
     address = models.TextField(null=True)
@@ -23,7 +26,9 @@ class Client(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE)
 
     def get_absolute_url(self):
-        return reverse('ledger:detail-client')
+        return reverse('ledger:detail-client', kwargs={
+            'pk': self.kwargs['pk']
+        })
 
     def __str__(self) -> str:
         return "{} - {}".format(self.name, self.mobile_number)
@@ -40,10 +45,46 @@ class SelectedPeriod(models.Model):
     def get_absolute_url(self):
         return reverse('ledger:is-period-set')
 
-    # def clean(self, *args, **kwargs):
-    #     # add custom validation here
-    #     if self.start_date > self.end_date:
-    #         raise ValueError("Start date is greater than end date.")
-    #     return super().clean(*args, **kwargs)
 
-    
+class Trancation(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    sector = models.CharField(null=False, max_length=100)
+    amount = models.IntegerField(null=False)
+    remarks = models.TextField(null=True, blank=True)
+    date = models.TextField()
+    booking_date = models.DateField()
+    passenger_list = models.TextField(null=True)
+    verifed = models.BooleanField(default=False)
+    firm = models.ForeignKey(Firm, on_delete=models.CASCADE, default=1)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE)
+
+    class Meta:
+        ordering = ['booking_date']
+        # unique_together = [
+        #     [
+        #         'sector', 'amount', 'remarks',
+        #         'date', 'booking_date', 'passenger_list',
+        #         'verifed'
+        #     ]
+        # ]
+
+    def __str__(self):
+        return "{} - {}".format(self.client, self.date)
+
+    def get_absolute_url(self):
+        return reverse('ledger:detail-client', kwargs={
+            'client_id': self.client_id
+        })
+
+    # def clean(self):
+    #     super(Trancation, self).clean()
+    #     print(self.clean_fields())
+    #     # instance = Trancation.objects.filter(
+    #     #     client_id=self.client, sector=self.sector,
+    #     #     amount=self.amount, date=self.date,
+    #     #     booking_date=self.booking_date,
+    #     #     passenger_list=self.passenger_list,
+    #     #     firm=self.firm,
+    #     # )
+    #     # print(instance)
+    #     raise ValidationError(_('Draft entries may not have a publication date.'))

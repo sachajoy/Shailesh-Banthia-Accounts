@@ -14,15 +14,22 @@
                 <tr>
                     <th>Name</th>
                     <th>Mobile Number</th>
-                    
+
+
                 </tr>
             </tfoot>
             <thbody>
                 {% for client in clients %}
-                <tr>
-                    <td> {{ client.name }}</td>
-                    <td> {{ client.mobile_number }} </td>
-                </tr>
+                
+                    <tr>
+                        <td>
+                            <a class="btn-sm" href="{% url 'ledger:detail-client' client_id=client.id %}">
+                                {{ client.name }}
+                                <a/>
+                        </td>
+                        <td> {{ client.mobile_number }} </td>
+                    </tr>
+
                 {% endfor %}
             </thbody>
         </table>

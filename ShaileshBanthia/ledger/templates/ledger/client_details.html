@@ -1,60 +1,279 @@
 {% extends 'template.html' %}
 {% load static %}
 {% block client_extra_dropdown_options %}
-<li>
-    <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
-        Update Client
-    </a>
-</li>
+    <li>
+        <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
+            Update Client
+        </a>
+    </li>
 {% endblock %}
 {% block extra_nav_tabs %}
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="ledger" role="button" data-bs-toggle="dropdown"
-        aria-expanded="false">
-        Ledger
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="ledger">
-        <li>
-            <a class="dropdown-item" href="#">
-                View Ledger
-            </a>
-        </li>
-    </ul>
-</li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="ledger" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Ledger
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="ledger">
+            <li>
+                <a class="dropdown-item" href="#">
+                    View Ledger
+                </a>
+            </li>
+        </ul>
+    </li>
 {% endblock %}
 {% block content %}
-{{ request.session.user }}
-<h3 class="mt-2">{{ client.name }}
-    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#client_details">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
-            viewBox="0 0 16 16">
-            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-        </svg>
-    </button>
-</h3>
+    <!-- Client name and actions -->
+    <h4 class="mt-2">{{ client.name }}
+        <a type="button" data-bs-toggle="modal" data-bs-target="#client_details">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
+                 viewBox="0 0 16 16">
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
+                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+            </svg>
+        </a>
+    </h4>
+    <form method="post" style="margin-top: 10px;">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-1" style="padding: 0px; margin: 0px;">
+                <input class="form-control" type="number" name="amount" placeholder="Amount"
+                        {% if form.amount.value is not None %} value="{{ form.amount.value }}" {% endif %} "/>
+            </div>
+            <div class="col-1" style="padding: 0px; margin: 0px;">
+                <input class="form-control" type="text" name="sector" placeholder="Sector"
+                        {% if form.sector.value %} value="{{ form.sector.value }}" {% endif %}/>
+            </div>
+            <div class="col-1" style="padding: 0px; margin: 0px;">
+                <input class="form-control" type="text" name="date" placeholder="Date"
+                        {% if form.date.value %} value="{{ form.date.value }}" {% endif %}/>
+            </div>
+            <div class="col-2" style="padding: 0px; margin: 0px;">
+                <input type="date" class="form-control" name="booking_date"
+                        {% if form.booking_date.value is not None %}
+                       value="{{ form.booking_date.value |  date:'Y-m-d' }}"  {% endif %}
+                       placeholder="Booking Date"/>
+            </div>
+            <div class="col-3" style="padding: 0px; margin: 0px;">
+                <input class="form-control" type="text" name="passenger_list" placeholder="Passenger List"
+                        {% if form.passenger_list.value %} value="{{ form.passenger_list.value }}" {% endif %}/>
+            </div>
+            <div class="col-2" style="padding: 0px; margin: 0px;">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="remarks" placeholder="Remarks"
+                            {% if form.remarks.value %} value="{{ form.remarks.value }}" {% endif %}/>
+
+                </div>
+
+            </div>
+            <div class="col-1" style="padding: 0px; margin: 0px;">
+                {{ form.firm }}
+            </div>
+            <div class="col-1">
+                <input type="submit" class="btn btn-success" value="submit">
+            </div>
+
+        </div>
+    </form>
+    <table style="padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table">
+        <tr>
+            <td width="25%">
+                Opening Balance:
+
+                {% if opening_balance %}
+                    {{ opening_balance }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+            <td width="25%">
+                Closing Balance:
+                {% if closing_balance %}
+                    {{ closing_balance }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <div class="col-md-6">
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong> {{ field.name | upper }} : {{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <table style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-hover table-bordered">
+        <tr style="color: white;">
+            <th style="width: 5%; ">Amount</th>
+            <th style="width: 10%;">Sector</th>
+            <th style="width: 10%;">Date</th>
+            <th style="width: 8%;">Booking Date</th>
+            <th style="width: 47%;">Passenger Name</th>
+            <th style="width: 15%;">Remarks</th>
+            <th style="width: 10%">Firm</th>
+            <th style="width: 5%;">Verifed</th>
+            <th style="width: 5%;">Delete</th>
+        </tr>
 
 
-<div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Name: {{ client.name }}</p>
-                <p>Mobile Number: {{ client.mobile_number }}</p>
-                <p>
-                    Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
-                <p>Intrest Rate: {{ client.intrest_rate }}</p>
-                <p>Address: {{ client.address }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a type="button" href="{% url 'ledger:update-client' pk=client.id %}" class="btn btn-success">Update</a>
+        {% for trancation in tranctions %}
+            {% if trancation.amount > 0 %}
+                <tr>
+                    <td style="width: 5%; text-align: right;">
+                        <a
+                                href="{% url 'ledger:detail-client-udpate-tranction' client_id=client.id pk=trancation.id %}">
+                            {{ trancation.amount }}
+                        </a>
+                    </td>
+                    <td style="width: 10%;">{{ trancation.sector }}</td>
+                    <td style="width: 10%;">{{ trancation.date }}</td>
+                    <td style="width: 8%;">
+                        {{ trancation.booking_date|date:'d-M-y' }}</td>
+                    <td style="width: 47%;">{{ trancation.passenger_list }}</td>
+                    <td style="width: 15%;">{{ trancation.remarks }}</td>
+                    <td style="width: 10%;">{{ trancation.firm.abs }}</td>
+                    <td style="width: 5%;">
+                        <a href="#"
+                           class="btn {% if trancation.verifed %}
+                        btn-success {% else %} btn-danger
+                    {% endif %} "></a>
+                    </td>
+                    <td>
+                        <a class="btn btn-close"
+                           href="{% url 'ledger:delete-client-tranction' client_id=client.id pk=trancation.id %}">
+                        </a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ total_payment_due }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;" colspan="2">
+                TOTAL DUE
+            </td>
+        </tr>
+
+    </table>
+    <table style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+           class="table table-condensed table-sm table-bordered">
+        <tr>
+            <th style="width: 5%; ">Amount</th>
+            <th style="width: 10%;">Sector</th>
+            <th style="width: 10%;">Date</th>
+            <th style="width: 8%;">Booking Date</th>
+            <th style="width: 47%;">Passenger Name</th>
+            <th style="width: 15%;">Remarks</th>
+            <th style="width: 10%">Firm</th>
+            <th style="width: 5%;">Verifed</th>
+            <th style="width: 5%;">Delete</th>
+
+        </tr>
+
+
+        {% for trancation in tranctions %}
+            {% if trancation.amount < 0 %}
+                <tr>
+                    <td style="width: 5%; text-align: right;">
+                        <a
+                                href="{% url 'ledger:detail-client-udpate-tranction' client_id=client.id pk=trancation.id %}">
+
+                            {{ trancation.amount }}
+                        </a>
+                    </td>
+                    <td style="width: 10%;">{{ trancation.sector }}</td>
+                    <td style="width: 10%;">{{ trancation.date }}</td>
+                    <td style="width: 8%;">
+                        {{ trancation.booking_date|date:'d-M-y' }}</td>
+                    <td style="width: 47%;">{{ trancation.passenger_list }}</td>
+                    <td style="width: 15%;">{{ trancation.remarks }}</td>
+                    <td style="width: 10%;">{{ trancation.firm.abs }}</td>
+                    <td style="width: 5%;">
+                        <a href="#"
+                           class="btn {% if trancation.verifed %}
+                        btn-success {% else %} btn-danger
+                    {% endif %} "></a>
+                    </td>
+                    <td>
+                        <a class="btn btn-close"
+                           href="#">
+
+                        </a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        <tr style="font-weight: bolder; border: 0px">
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">{{ total }}</td>
+            <td style=" text-align: center; border: 0px; padding-left: 6px" colspan="2">
+                {% if total >= 0 %}
+                    TOTAL DUE
+                {% else %}
+                    TOTAL ADVANCE
+                {% endif %}
+            </td>
+        </tr>
+
+    </table>
+
+
+    <!-- Model for client details and update -->
+    <div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Name: {{ client.name }}</p>
+                    <p>Mobile Number: {{ client.mobile_number }}</p>
+                    <p>
+                        Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
+                    <p>Intrest Rate: {{ client.intrest_rate }}</p>
+                    <p>Address: {{ client.address }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a type="button" href="{% url 'ledger:update-client' pk=client.id %}"
+                       class="btn btn-success">Update</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let root = document.getElementById('id_firm')
+        root.classList.add("form-control");
+    </script>
 {% endblock %}
