@@ -1,7 +1,8 @@
 {%  extends 'template.html' %}
 
-{% block title %} Create New User {% endblock %}
+{% block title %} Update User {% endblock %}
 {% block content %}
+    <h3></h3>
     <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
