@@ -4,7 +4,7 @@ from django.views.generic import (
 )
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import reverse, render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .. import models
 
 
@@ -39,7 +39,6 @@ class FirmUpdateView(LoginRequiredMixin, UpdateView):
 def select_firm(request):
     if request.method == 'POST':
         firm_id = request.POST.get('firm')
-        # print(firm_id)
         if firm_id == 0 or firm_id == "0":
             request.session['firm_id'] = firm_id
             request.session['firm_name'] = "All Company"

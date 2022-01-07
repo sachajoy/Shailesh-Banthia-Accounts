@@ -6,6 +6,7 @@ from .views import firm_views
 from .views import client_views
 from .views import selected_period_view
 from .views import tranction_view
+from .views import client_ledger_view
 
 app_name = 'ledger'
 urlpatterns = [
@@ -28,4 +29,7 @@ urlpatterns = [
     path('set-period/', selected_period_view.SelectPeriodCreateView.as_view(), name='create-period'),
     path('set-period/<int:pk>/', selected_period_view.SelectPeriodUpdateView.as_view(), name='set-period'),
     path('select-firm', firm_views.select_firm, name='select-firm'),
+    path('ledger/<int:client_id>',
+         client_ledger_view.ClientLedgerListView.as_view(),
+         name='ledger-client'),
 ]

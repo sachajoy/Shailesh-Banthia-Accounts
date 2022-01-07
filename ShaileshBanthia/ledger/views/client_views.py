@@ -1,15 +1,43 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
 from django.views.generic import (
     CreateView,
     DetailView,
     UpdateView
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
+
 from .. import models
 
-class ClientCreateView(LoginRequiredMixin, CreateView):
+
+class ClientCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = models.Client
     fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
+    permission_required = 'ledger.add_client'
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('ledger:detail-client', kwargs={
+            'pk': self.object.id,
+        })
+
+
+class ClientUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = models.Client
+    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
+    permission_required = 'ledger.change_client'
+
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -18,27 +46,9 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('ledger:detail-client', kwargs= {
-            'pk':self.object.id,
+        return reverse('ledger:detail-client', kwargs={
+            'pk': self.get_object().id,
         })
 
-class ClientDetialView(LoginRequiredMixin, DetailView):
-    model = models.Client
-    template_name = 'ledger/client_details.html'
-    context_object_name = 'client'
-
-
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
-    model = models.Client
-    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.created_by = self.request.user
-        self.object.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('ledger:detail-client', kwargs= {
-            'pk':self.get_object().id,
-        })
+    def get_redirect_field_name(self):
+        return reverse('permission-denied')

@@ -1,81 +1,91 @@
 {% extends 'template.html' %}
 {% load static %}
-
+{% block title %} Client Details {% endblock %}
 {% block client_extra_dropdown_options %}
-    <li>
-        <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
-            Update Client
-        </a>
-    </li>
+    {% if perms.ledger.change_client %}
+        <li>
+            <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
+                Update Client
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 {% block extra_nav_tabs %}
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="ledger" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Ledger
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="ledger">
-            <li>
-                <a class="dropdown-item" href="#">
-                    View Ledger
-                </a>
-            </li>
-        </ul>
-    </li>
+    {% if perms.ledger.view_ledger %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+               href="#" id="ledger" role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+                Ledger
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="ledger">
+                <li>
+                    <a class="dropdown-item" href="{%  url 'ledger:ledger-client' client_id=client.id %}">
+                        View Ledger
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <!-- Client name and actions -->
     <h4 class="mt-2">{{ client.name }}
-        <a type="button" data-bs-toggle="modal" data-bs-target="#client_details">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
-                 viewBox="0 0 16 16">
-                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
-                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
-            </svg>
-        </a>
+        {% if perms.ledger.view_client %}
+            <a type="button" data-bs-toggle="modal" data-bs-target="#client_details">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
+                     viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
+                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+                </svg>
+            </a>
+        {% endif %}
     </h4>
-    <form method="post" style="margin-top: 10px;">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-1" style="padding: 0px; margin: 0px;">
-                <input class="form-control" type="number" name="amount" placeholder="Amount"
-                        {% if form.amount.value is not None %} value="{{ form.amount.value }}" {% endif %} "/>
-            </div>
-            <div class="col-1" style="padding: 0px; margin: 0px;">
-                <input class="form-control" type="text" name="sector" placeholder="Sector"
-                        {% if form.sector.value %} value="{{ form.sector.value }}" {% endif %}/>
-            </div>
-            <div class="col-1" style="padding: 0px; margin: 0px;">
-                <input class="form-control" type="text" name="date" placeholder="Date"
-                        {% if form.date.value %} value="{{ form.date.value }}" {% endif %}/>
-            </div>
-            <div class="col-2" style="padding: 0px; margin: 0px;">
-                <input type="date" class="form-control" name="booking_date"
-                        {% if form.booking_date.value is not None %}
-                       value="{{ form.booking_date.value |  date:'Y-m-d' }}"  {% endif %}
-                       placeholder="Booking Date"/>
-            </div>
-            <div class="col-3" style="padding: 0px; margin: 0px;">
-                <input class="form-control" type="text" name="passenger_list" placeholder="Passenger List"
-                        {% if form.passenger_list.value %} value="{{ form.passenger_list.value }}" {% endif %}/>
-            </div>
-            <div class="col-2" style="padding: 0px; margin: 0px;">
-                <div class="input-group">
-                    <input class="form-control" type="text" name="remarks" placeholder="Remarks"
-                            {% if form.remarks.value %} value="{{ form.remarks.value }}" {% endif %}/>
+    {% if perms.ledger.add_trancation %}
+        <form method="post" style="margin-top: 10px;">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="number" name="amount" placeholder="Amount"
+                            {% if form.amount.value is not None %} value="{{ form.amount.value }}" {% endif %} />
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="sector" placeholder="Sector"
+                            {% if form.sector.value %} value="{{ form.sector.value }}" {% endif %}/>
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="date" placeholder="Date"
+                            {% if form.date.value %} value="{{ form.date.value }}" {% endif %}/>
+                </div>
+                <div class="col-2" style="padding: 0px; margin: 0px;">
+                    <input type="date" class="form-control" name="booking_date"
+                            {% if form.booking_date.value is not None %}
+                           value="{{ form.booking_date.value |  date:'Y-m-d' }}"  {% endif %}
+                           placeholder="Booking Date"/>
+                </div>
+                <div class="col-3" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="passenger_list" placeholder="Passenger List"
+                            {% if form.passenger_list.value %} value="{{ form.passenger_list.value }}" {% endif %}/>
+                </div>
+                <div class="col-2" style="padding: 0px; margin: 0px;">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="remarks" placeholder="Remarks"
+                                {% if form.remarks.value %} value="{{ form.remarks.value }}" {% endif %}/>
 
+                    </div>
+
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    {{ form.firm }}
+                </div>
+                <div class="col-1">
+                    <input type="submit" class="btn btn-success" value="submit">
                 </div>
 
             </div>
-            <div class="col-1" style="padding: 0px; margin: 0px;">
-                {{ form.firm }}
-            </div>
-            <div class="col-1">
-                <input type="submit" class="btn btn-success" value="submit">
-            </div>
-
-        </div>
-    </form>
+        </form>
+    {% endif %}
     <table style="padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
            class="table">
         <tr>
@@ -115,8 +125,8 @@
         {% endif %}
     </div>
     <table id="creditTable"
-           style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
-           class="table table-condensed table-sm table-striped table-hover table-bordered">
+           style="font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-bordered table-hover">
 
 
         <thead>
@@ -186,7 +196,7 @@
     <hr />
     <table id="debitTable"
            style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
-           class="table table-condensed table-sm table-bordered">
+           class="table table-condensed table-hover table-sm ">
         <thead>
         <tr>
             <th style="width: 5%; ">Amount</th>
@@ -253,43 +263,51 @@
 
     </table>
 
-
-    <!-- Model for client details and update -->
-    <div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Name: {{ client.name }}</p>
-                    <p>Mobile Number: {{ client.mobile_number }}</p>
-                    <p>
-                        Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
-                    <p>Intrest Rate: {{ client.intrest_rate }}</p>
-                    <p>Address: {{ client.address }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a type="button" href="{% url 'ledger:update-client' pk=client.id %}"
-                       class="btn btn-success">Update</a>
+    {% if perms.ledger.view_client %}
+        <!-- Model for client details and update -->
+        <div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Name: {{ client.name }}</p>
+                        <p>Mobile Number: {{ client.mobile_number }}</p>
+                        <p>
+                            Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
+                        <p>Intrest Rate: {{ client.intrest_rate }}</p>
+                        <p>Address: {{ client.address }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a type="button" href="{% url 'ledger:update-client' pk=client.id %}"
+                           class="btn btn-success">Update</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block script %}
     <script>
-        let root = document.getElementById('id_firm')
-        root.classList.add("form-control");
         $(document).ready(function () {
-            $('#creditTable').DataTable();
+            $('#creditTable').DataTable({
+                "ordering":false
+            });
         });
-         $(document).ready(function () {
-            $('#debitTable').DataTable();
+        $(document).ready(function () {
+            $('#debitTable').DataTable({
+                "ordering":false
+            });
         });
+        let root = document.getElementById('id_firm')
+        if (root != null){
+            root.classList.add("form-control");
+        }
+
 
     </script>
 {% endblock %}

@@ -64,6 +64,9 @@ class Trancation(models.Model):
 
     class Meta:
         ordering = ['booking_date']
+        permissions = (
+            ("view_ledger", "Can View Ledger"),
+        )
 
     def __str__(self):
         return "{} - {}".format(self.client, self.date)

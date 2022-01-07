@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Sum
 from django.views.generic import (
     UpdateView,
@@ -6,9 +6,13 @@ from django.views.generic import (
     DeleteView
 )
 from .. import forms
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
 from .. import models
-
+from .helper_functions import (
+    client_trancation_details_selected_firm,
+    client_trancation_detial_all_company
+)
 
 class ClientDetailTranctionCreateListView(LoginRequiredMixin, CreateView):
     model = models.Trancation
@@ -17,60 +21,18 @@ class ClientDetailTranctionCreateListView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        client = models.Client.objects.get(pk=self.kwargs.get('client_id'))
-        period = models.SelectedPeriod.objects.get(user=self.request.user)
+        client_id = self.kwargs.get('client_id')
+        user_id = self.request.user.pk
         firm_id = self.request.session['firm_id']
-        tranctions = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date
-        )
-        opening_balance = models.Trancation.objects.filter(
-            client=client, booking_date__lt=period.start_date
-        ).aggregate(balance=Sum('amount'))
-        closing_balance = models.Trancation.objects.filter(
-            client=client, booking_date__lte=period.end_date
-        ).aggregate(balance=Sum('amount'))
-        payment = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date, amount__gt=0
-        ).aggregate(payment=Sum('amount'))
-        recipt = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date, amount__lt=0,
-        ).aggregate(recipt=Sum('amount'))
         if firm_id != "0":
-            tranctions = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, firm_id=firm_id
-            )
-            opening_balance = models.Trancation.objects.filter(
-                client=client, booking_date__lt=period.start_date, firm_id=firm_id
-            ).aggregate(balance=Sum('amount'))
-            closing_balance = models.Trancation.objects.filter(
-                client=client, booking_date__lte=period.end_date, firm_id=firm_id
-            ).aggregate(balance=Sum('amount'))
-            payment = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, amount__gt=0, firm_id=firm_id
-            ).aggregate(payment=Sum('amount'))
-            recipt = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, amount__lt=0, firm_id=firm_id
-            ).aggregate(recipt=Sum('amount'))
-
-        payment['payment'] = payment['payment'] if payment['payment'] else 0
-        recipt['recipt'] = recipt['recipt'] if recipt['recipt'] else 0
-        opening_balance['balance'] = opening_balance['balance'] if opening_balance['balance'] else 0
-        closing_balance['balance'] = closing_balance['balance'] if closing_balance['balance'] else 0
-        total_payment_due = payment['payment'] + opening_balance['balance']
-        total = payment['payment'] + opening_balance['balance'] + recipt['recipt']
-        context['client'] = client
-        context['tranctions'] = tranctions
-        context['opening_balance'] = opening_balance['balance']
-        context['closing_balance'] = closing_balance['balance']
-        context['total_payment_due'] = total_payment_due
-        context['total'] = total
+            context.update(client_trancation_details_selected_firm(
+                client_id=client_id, user_id=user_id, firm_id=firm_id
+            ))
+            print(context)
+            return context
+        context.update(client_trancation_detial_all_company(client_id, user_id))
         return context
+
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(ClientDetailTranctionCreateListView, self).get_form_kwargs()
@@ -89,66 +51,28 @@ class ClientDetailTranctionCreateListView(LoginRequiredMixin, CreateView):
         })
 
 
-class ClientDetailTranctionUpdateListView(LoginRequiredMixin, UpdateView):
+class ClientDetailTranctionUpdateListView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ['ledger.change_trancation']
+    redirect_field_name = reverse_lazy('permission-denied')
     model = models.Trancation
     form_class = forms.TrancationForm
     template_name = 'ledger/client_details.html'
 
+    def handle_no_permission(self):
+        return redirect('permission-denied')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        client = models.Client.objects.get(pk=self.kwargs.get('client_id'))
-        period = models.SelectedPeriod.objects.get(user=self.request.user)
+        client_id = self.kwargs.get('client_id')
+        user_id = self.request.user.pk
         firm_id = self.request.session['firm_id']
-        tranctions = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date
-        )
-        opening_balance = models.Trancation.objects.filter(
-            client=client, booking_date__lt=period.start_date
-        ).aggregate(balance=Sum('amount'))
-        closing_balance = models.Trancation.objects.filter(
-            client=client, booking_date__lte=period.end_date
-        ).aggregate(balance=Sum('amount'))
-        payment = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date, amount__gt=0
-        ).aggregate(payment=Sum('amount'))
-        recipt = models.Trancation.objects.filter(
-            client=client, booking_date__gte=period.start_date,
-            booking_date__lte=period.end_date, amount__lt=0,
-        ).aggregate(recipt=Sum('amount'))
         if firm_id != "0":
-            tranctions = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, firm_id=firm_id
-            )
-            opening_balance = models.Trancation.objects.filter(
-                client=client, booking_date__lt=period.start_date, firm_id=firm_id
-            ).aggregate(balance=Sum('amount'))
-            closing_balance = models.Trancation.objects.filter(
-                client=client, booking_date__lte=period.end_date, firm_id=firm_id
-            ).aggregate(balance=Sum('amount'))
-            payment = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, amount__gt=0, firm_id=firm_id
-            ).aggregate(payment=Sum('amount'))
-            recipt = models.Trancation.objects.filter(
-                client=client, booking_date__gte=period.start_date,
-                booking_date__lte=period.end_date, amount__lt=0, firm_id=firm_id
-            ).aggregate(recipt=Sum('amount'))
-
-        payment['payment'] = payment['payment'] if payment['payment'] else 0
-        recipt['recipt'] = recipt['recipt'] if recipt['recipt'] else 0
-        opening_balance['balance'] = opening_balance['balance'] if opening_balance['balance'] else 0
-        closing_balance['balance'] = closing_balance['balance'] if closing_balance['balance'] else 0
-        total_payment_due = payment['payment'] + opening_balance['balance']
-        total = payment['payment'] + opening_balance['balance'] + recipt['recipt']
-        context['client'] = client
-        context['tranctions'] = tranctions
-        context['opening_balance'] = opening_balance['balance']
-        context['closing_balance'] = closing_balance['balance']
-        context['total_payment_due'] = total_payment_due
-        context['total'] = total
+            context.update(client_trancation_details_selected_firm(
+                client_id=client_id, user_id=user_id, firm_id=firm_id
+            ))
+            print(context)
+            return context
+        context.update(client_trancation_detial_all_company(client_id, user_id))
         return context
 
     def form_valid(self, form):

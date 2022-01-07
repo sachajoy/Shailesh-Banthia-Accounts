@@ -1,31 +1,33 @@
 from django.contrib.auth.forms import (
     UserCreationForm, UserChangeForm,
 )
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Permission
 from authentication.models import User
 from django.forms import CheckboxSelectMultiple, ModelMultipleChoiceField
-class CustomUserCreationForm(UserCreationForm):
 
+
+class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = UserCreationForm.Meta.fields + (
             'name', 'email', 'mob_no'
         )
+
+
 class MyModelMultipleChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return obj.name
 
+
 class CustomUserChangeForm(UserChangeForm):
     user_permissions = MyModelMultipleChoiceField(Permission.objects.exclude(
-            content_type__app_label__in=['auth', 'admin', 'sessions', 'users', 'contenttypes']
-        ), widget=CheckboxSelectMultiple)
+        content_type__app_label__in=['auth', 'admin', 'sessions', 'users', 'contenttypes']
+    ), widget=CheckboxSelectMultiple)
+
     class Meta(UserChangeForm.Meta):
         model = User
         fields = ('name', 'username', 'email', 'mob_no',
                   'is_active', 'is_superuser', 'user_permissions')
-
-        help_texts = ""
 
     def __init__(self, *args, **kwargs):
         super(CustomUserChangeForm, self).__init__(*args, **kwargs)
@@ -50,7 +52,6 @@ class CustomUserChangeForm(UserChangeForm):
             }
         )
 
-
         self.fields['is_active'].widget.attrs.update(
             {
                 'class': 'form-check-input',
@@ -61,4 +62,3 @@ class CustomUserChangeForm(UserChangeForm):
                 'class': 'form-check-input',
             }
         )
-

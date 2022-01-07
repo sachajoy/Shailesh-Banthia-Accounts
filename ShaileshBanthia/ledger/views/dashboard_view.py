@@ -8,3 +8,8 @@ class DashboardListView(LoginRequiredMixin, ListView):
     model = models.Client
     template_name = 'ledger/dashboard.html'
     context_object_name = 'clients'
+
+
+@login_required
+def access_denid(request):
+    return render(request, 'acces_denid.html')

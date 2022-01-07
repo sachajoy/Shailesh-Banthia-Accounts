@@ -13,7 +13,6 @@ from .. import models
 def is_date_set(request):
     selected_peroid_record = models.SelectedPeriod.objects.filter(
         user_id=request.user.id)
-    print(selected_peroid_record)
     if len(selected_peroid_record) != 1:
         return redirect('ledger:create-period')
     start_date = selected_peroid_record[0].start_date
