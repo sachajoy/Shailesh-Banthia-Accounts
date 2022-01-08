@@ -49,14 +49,16 @@
                     {{ tran.amount }}</td>
                 <td style="width: 10%;">{{ tran.sector }}</td>
                 <td style="width: 12%;">{{ tran.date }}</td>
-                <td>{{ tran.booking_date | date:'d-M-y' }}</td>
+                <td>{{ tran.booking_date | date:'d-M-y'}}</td>
                 <td>{{ tran.passenger_list }}</td>
                 <td>
                     {{ tran.balance }}
                 </td>
                 <td>{{ tran.firm }}</td>
                 <td>
-                    <a class="btn btn-primary" href="#"></a>
+                    <a
+                            class="btn btn-primary"
+                            href="{% url 'ledger:print-client-ledger' client_id=client.id trancation_id=tran.id %}"></a>
                 </td>
             </tr>
         {% endfor %}
