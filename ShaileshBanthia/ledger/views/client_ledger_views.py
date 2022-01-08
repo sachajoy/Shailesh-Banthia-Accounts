@@ -73,13 +73,15 @@ class ClientLedgerPrintListView(
             ).aggregate(opening_balance=Sum('amount'))
         total_positive = trancations.filter(amount__gte=0).aggregate(total=Sum('amount'))
         total_negative = trancations.filter(amount__lte=0).aggregate(total=Sum('amount'))
-        client = models.Client.objects.get(pk=client_id)
         context = {
             'opening_balance': opening_balance['opening_balance'] if opening_balance['opening_balance'] else 0,
             'total_due': total_positive['total'] if total_positive['total'] else 0,
             'total_rec': total_negative['total'] if total_negative['total'] else 0,
             'tranctions': trancations,
-            'client': client
         }
+        if context['opening_balance'] > 0:
+            context['total_due'] += context['opening_balance']
+        else:
+            context['total_rec'] += context['opening_balance']
         context['total'] = context['total_due'] + context['total_rec']
         return context
