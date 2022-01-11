@@ -161,6 +161,7 @@
                     <td style="width: 10%;">{{ trancation.firm.abs }}</td>
                     <td style="width: 5%;">
                         <a href="#"
+                           onclick="verfiyEntry({{ client.id }},{{ trancation.id }}, this)"
                            class="btn {% if trancation.verifed %}
                         btn-success {% else %} btn-danger
                     {% endif %} "></a>
@@ -293,6 +294,28 @@
 
 {% block script %}
     <script>
+    function verfiyEntry(client_id, id, ele){
+            $.ajax({
+                url: 'client/trancation/verfiy',
+                type:"POST",
+                data: {
+                    'csrfmiddlewaretoken':"{{ csrf_token }}",
+                    'trancation_id':id
+                },
+                success: function (result) {
+                    {#console.log(result)#}
+                    if(result.result === true){
+                        $(ele).removeClass('btn-danger')
+                        $(ele).addClass('btn-success')
+                    }else{
+                        $(ele).removeClass('btn-success');
+                        $(ele).addClass('btn-danger');
+                    }
+                }
+
+            });
+        }
+
         $(document).ready(function () {
             $('#creditTable').DataTable({
                 "ordering":false
@@ -307,7 +330,6 @@
         if (root != null){
             root.classList.add("form-control");
         }
-
 
     </script>
 {% endblock %}

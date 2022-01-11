@@ -8,9 +8,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .. import models
 
 
-class FirmCreateView(LoginRequiredMixin, CreateView):
+class FirmCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = models.Firm
     fields = ['name', 'abs']
+    permission_required = "ledger.add_firm"
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -19,15 +23,23 @@ class FirmCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class FirmListView(LoginRequiredMixin, ListView):
+class FirmListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = models.Firm
     context_object_name = 'firms'
     template_name = 'ledger/firm_list.html'
+    permission_required = "ledger.view_firm"
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
 
 
-class FirmUpdateView(LoginRequiredMixin, UpdateView):
+class FirmUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = models.Firm
     fields = ['name', 'abs']
+    permission_required = "ledger.view_firm"
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

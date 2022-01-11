@@ -1,18 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 from django.views.generic import (
     UpdateView,
     CreateView,
     DeleteView
 )
+from django.http import JsonResponse
 from .. import forms
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .. import models
 from .helper_functions import (
     client_trancation_details_selected_firm,
     client_trancation_detial_all_company
 )
+
 
 class ClientDetailTranctionCreateListView(LoginRequiredMixin, CreateView):
     model = models.Trancation
@@ -32,7 +34,6 @@ class ClientDetailTranctionCreateListView(LoginRequiredMixin, CreateView):
             return context
         context.update(client_trancation_detial_all_company(client_id, user_id))
         return context
-
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(ClientDetailTranctionCreateListView, self).get_form_kwargs()
@@ -92,11 +93,28 @@ class ClientDetailTranctionUpdateListView(LoginRequiredMixin, PermissionRequired
         return kwargs
 
 
-class ClientTranctionDeleteView(LoginRequiredMixin, DeleteView):
+class ClientTranctionDeleteView(LoginRequiredMixin, PermissionRequiredMixin,  DeleteView):
     model = models.Trancation
     context_object_name = 'trancation'
+    permission_required = "ledger.delete_trancation"
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
 
     def get_success_url(self):
         return reverse_lazy('ledger:detail-client', kwargs={
             'client_id': self.kwargs['client_id']
         })
+
+
+@login_required
+def verfiy_entry(request, client_id):
+    if request.method == 'POST':
+        trancation_id = request.POST.get('trancation_id')
+        print("Trancation ID:" + trancation_id)
+        trancation = models.Trancation.objects.get(pk=trancation_id)
+        trancation.verifed = not trancation.verifed
+        trancation.save()
+        return JsonResponse({'result': trancation.verifed})
+    return JsonResponse({'result':'Did not get id'})
+

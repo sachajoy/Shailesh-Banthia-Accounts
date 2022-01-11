@@ -17,7 +17,7 @@ class ClientCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def handle_no_permission(self):
         return redirect('permission-denied')
-    
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.created_by = self.request.user
@@ -34,7 +34,6 @@ class ClientUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = models.Client
     fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
     permission_required = 'ledger.change_client'
-
 
     def handle_no_permission(self):
         return redirect('permission-denied')

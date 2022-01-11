@@ -34,4 +34,5 @@ urlpatterns = [
     path('print/client/<int:client_id>/ledger/<int:trancation_id>/',
          client_ledger_views.ClientLedgerPrintListView.as_view(),
          name='print-client-ledger'),
+    path('detail-client/<int:client_id>/client/trancation/verfiy', tranction_view.verfiy_entry, name='verify'),
 ]

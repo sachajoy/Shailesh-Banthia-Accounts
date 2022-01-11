@@ -22,7 +22,7 @@ class MyModelMultipleChoiceField(ModelMultipleChoiceField):
 class CustomUserChangeForm(UserChangeForm):
     user_permissions = MyModelMultipleChoiceField(Permission.objects.exclude(
         content_type__app_label__in=['auth', 'admin', 'sessions', 'users', 'contenttypes']
-    ), widget=CheckboxSelectMultiple)
+    ).exclude(content_type__model__in=['selectedperiod', 'selectedfirm', 'user']), widget=CheckboxSelectMultiple)
 
     class Meta(UserChangeForm.Meta):
         model = User

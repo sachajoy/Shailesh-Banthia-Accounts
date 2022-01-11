@@ -48,7 +48,7 @@ class ClientLedgerPrintListView(
 ):
     model = models.Trancation
     template_name = 'ledger/print_client_ledger.html'
-    permission_required = 'ledger.view_trancation'
+    permission_required = 'ledger.view_ledger'
 
     def handle_no_permission(self):
         return redirect('permission-denied')
