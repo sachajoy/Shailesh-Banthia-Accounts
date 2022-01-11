@@ -1,5 +1,7 @@
-from .. import  models
+from .. import models
 from django.db.models import Sum
+
+
 def client_trancation_details_selected_firm(client_id, user_id, firm_id):
     context = {}
     client = models.Client.objects.get(pk=client_id)
@@ -7,7 +9,7 @@ def client_trancation_details_selected_firm(client_id, user_id, firm_id):
     tranctions = models.Trancation.objects.filter(
         client=client, booking_date__gte=period.start_date,
         booking_date__lte=period.end_date, firm_id=firm_id
-    ).order_by('-booking_date')
+    )
     opening_balance = models.Trancation.objects.filter(
         client=client, booking_date__lt=period.start_date, firm_id=firm_id
     ).aggregate(balance=Sum('amount'))
@@ -40,6 +42,7 @@ def client_trancation_details_selected_firm(client_id, user_id, firm_id):
     context['total'] = total
     return context
 
+
 def client_trancation_detial_all_company(client_id, user_id):
     context = {}
     client = models.Client.objects.get(pk=client_id)
@@ -62,7 +65,6 @@ def client_trancation_detial_all_company(client_id, user_id):
         client=client, booking_date__gte=period.start_date,
         booking_date__lte=period.end_date, amount__lt=0,
     ).aggregate(recipt=Sum('amount'))
-
 
     payment['payment'] = payment['payment'] if payment['payment'] else 0
     recipt['recipt'] = recipt['recipt'] if recipt['recipt'] else 0

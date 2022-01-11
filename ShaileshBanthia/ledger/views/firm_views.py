@@ -35,6 +35,7 @@ class FirmUpdateView(LoginRequiredMixin, UpdateView):
         self.object.save()
         return super().form_valid(form)
 
+
 @login_required
 def select_firm(request):
     if request.method == 'POST':
@@ -49,5 +50,5 @@ def select_firm(request):
         return redirect('ledger:index')
     firms = models.Firm.objects.all()
     return render(request, 'ledger/select_firm.html', {
-        'firms':firms
+        'firms': firms
     })

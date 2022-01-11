@@ -5,6 +5,7 @@ from django.shortcuts import reverse
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+
 class Firm(models.Model):
     name = models.CharField(max_length=40, unique=True, null=False)
     abs = models.CharField(max_length=40, unique=True, null=False)
@@ -27,7 +28,7 @@ class Client(models.Model):
 
     def get_absolute_url(self):
         return reverse('ledger:detail-client', kwargs={
-            'pk': self.kwargs['pk']
+            'pk': self.kwargs['client_id']
         })
 
     def __str__(self) -> str:
@@ -75,4 +76,3 @@ class Trancation(models.Model):
         return reverse('ledger:detail-client', kwargs={
             'client_id': self.client_id
         })
-

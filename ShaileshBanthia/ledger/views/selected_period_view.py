@@ -17,13 +17,10 @@ def is_date_set(request):
         return redirect('ledger:create-period')
     start_date = selected_peroid_record[0].start_date
     end_date = selected_peroid_record[0].end_date
-    end_date = selected_peroid_record[0].end_date
     request.session["start_date"] = start_date.strftime('%b %d, %Y')
     request.session["end_date"] = end_date.strftime('%b %d, %Y')
-    request.session["firm_id"] = 0
-    request.session["firm_name"] = "All Company"
     request.session.set_expiry(0)
-    return redirect('ledger:index')
+    return redirect('ledger:select-firm')
 
 
 class SelectPeriodUpdateView(LoginRequiredMixin, UpdateView):
@@ -42,11 +39,12 @@ class SelectPeriodUpdateView(LoginRequiredMixin, UpdateView):
             queryset = self.get_queryset()
         return get_object_or_404(queryset, user=self.kwargs['pk'])
 
+
 class SelectPeriodCreateView(LoginRequiredMixin, CreateView):
     model = models.SelectedPeriod
     fields = ['start_date', 'end_date']
     template_name = 'ledger/set_period.html'
-    
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user

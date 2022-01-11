@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
     def _create_user(self, email, username, name, password, **extra_fields):
         if not email:
             raise ValueError("User must have a Email Address")
-        
+
         if not username:
             raise ValueError("User must have a username")
 
@@ -21,7 +21,7 @@ class UserManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             username=self.username,
-            name=self.name
+            name=self.name,
             **extra_fields
         )
 
@@ -29,7 +29,7 @@ class UserManager(BaseUserManager):
         user.save()
 
         return user
-    
+
     def create_user(self, email, username, name, password, **extra_fields):
         return self._create_user(email, username, name, password, **extra_fields)
 

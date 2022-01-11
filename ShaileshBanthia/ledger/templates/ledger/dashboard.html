@@ -23,14 +23,14 @@
                 <tbody>
                     {% for client in clients %}
                 
-                        <tr>
+                        <tr style="font-weight: bolder;">
                             <td>
                                 <a class="btn-sm" href="{% url 'ledger:detail-client' client_id=client.id %}">
                                     {{ client.name }}
                                 </a>
                             </td>
                             <td> {{ client.mobile_number }}</td>
-                            <td style="background-color: {% if client.val > 0 %} red {% else %} green {% endif %}">
+                            <td style="color: {% if client.val > 0 %} red {% else %} green {% endif %}">
                                 {% if client.val is not None %}
                                     {{ client.val }}
                                 {% else %}

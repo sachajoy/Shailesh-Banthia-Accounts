@@ -59,8 +59,20 @@
                 </ul>
                 <span class="navbar-text">
                     <div class="dropdown">
-                        <a href="{% url 'ledger:select-firm' %}" style="text-decoration: none;">{{ request.session.firm_name }}&nbsp;</a>
-                        <a href="{% url 'ledger:set-period' pk=user.id %}" style="text-decoration: none;">{{ request.session.start_date }} - {{ request.session.end_date }}</a>
+                        <a href="{% url 'ledger:select-firm' %}" style="text-decoration: none;">
+                            {% if request.session.firm_name %}
+                            {{ request.session.firm_name }}
+                            {% else %}
+                            Firm Not Set.
+                            {% endif %}&nbsp;
+                        </a>
+                        <a href="{% url 'ledger:set-period' pk=user.id %}" style="text-decoration: none;">
+                            {%  if request.session.start_date %}
+                            {{ request.session.start_date }} - {{ request.session.end_date }}
+                            {% else %}
+                            Period not set.
+                            {% endif %}
+                        </a>
                         &nbsp;
                         <a class="dropdown-toggle" type="button" style="text-decoration: none;" id="profile"
                            data-bs-toggle="dropdown" aria-expanded="false">

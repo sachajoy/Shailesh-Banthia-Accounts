@@ -14,7 +14,7 @@
             aria-describedby="basic-addon1">
     </div>
     <div class="input-group  mb-3">
-        <span class="input-group-text" id="basic-addon1">Abs: </span>
+        <span class="input-group-text" id="basic-addon1">To: </span>
         <input type="date" class="form-control" name="end_date" 
         {% if form.end_date.value is not None %} value="{{form.end_date.value |  date:'Y-m-d'}}"  {% endif %}
         placeholder="Abrevation of Firm" aria-label="Username"

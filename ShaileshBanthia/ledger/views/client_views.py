@@ -26,7 +26,7 @@ class ClientCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('ledger:detail-client', kwargs={
-            'pk': self.object.id,
+            'client_id': self.object.id,
         })
 
 
