@@ -12,7 +12,7 @@ from .. import models
 
 class ClientCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = models.Client
-    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
+    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address', 'intrest_day']
     permission_required = 'ledger.add_client'
 
     def handle_no_permission(self):
@@ -32,7 +32,7 @@ class ClientCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 class ClientUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = models.Client
-    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address']
+    fields = ['name', 'mobile_number', 'intrest_status', 'intrest_rate', 'address', 'intrest_day']
     permission_required = 'ledger.change_client'
 
     def handle_no_permission(self):
@@ -46,7 +46,7 @@ class ClientUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('ledger:detail-client', kwargs={
-            'pk': self.get_object().id,
+            'client_id': self.get_object().id,
         })
 
     def get_redirect_field_name(self):

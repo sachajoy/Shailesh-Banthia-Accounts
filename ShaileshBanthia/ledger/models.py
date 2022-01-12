@@ -25,7 +25,7 @@ class Client(models.Model):
     intrest_status = models.BooleanField(default=False)
     intrest_rate = models.FloatField(default=0)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE)
-
+    intrest_day = models.IntegerField(default='0')
     def get_absolute_url(self):
         return reverse('ledger:detail-client', kwargs={
             'pk': self.kwargs['client_id']
@@ -67,6 +67,7 @@ class Trancation(models.Model):
         ordering = ['booking_date']
         permissions = (
             ("view_ledger", "Can View Ledger"),
+            ("view_all_trancations", "Can View all Trancations")
         )
 
     def __str__(self):

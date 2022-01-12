@@ -33,6 +33,13 @@
             placeholder="Intrest Rate" aria-label="Username"
                 aria-describedby="basic-addon1">
         </div>
+    <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Intrest Days: </span>
+            <input type="number" class="form-control" name="intrest_day"
+            {% if form.intrest_day is not None %}value="{{form.intrest_day.value}}" {% endif %}
+            placeholder="Intrest Days" aria-label="Username"
+                aria-describedby="basic-addon1">
+        </div>
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Address: </span>
             <input type="text" class="form-control" name="address" 
@@ -41,7 +48,7 @@
                 aria-describedby="basic-addon1">
         </div>
 
-        <input type="submit" class="btn btn-success" value="Add New Client" />
+        <input type="submit" class="btn btn-success" value="Add/Update New Client" />
     </form>
     <div class="col-md-6">
         {% if form.errors %}

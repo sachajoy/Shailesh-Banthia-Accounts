@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 
-    <title>{{ tranctions.last.client.name }} {{ tranctions.last.booking_date | date:'d-M-Y' | upper }} {{ request.session.firm_name }}
+    <title>{{ tranctions.last.client.name | upper }} {{ tranctions.last.booking_date | date:'d-M-Y' | upper }}
         </title>
 </head>
 <style>

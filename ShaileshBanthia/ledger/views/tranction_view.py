@@ -109,7 +109,7 @@ class ClientTranctionDeleteView(LoginRequiredMixin, PermissionRequiredMixin,  De
 
 class TrancationListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = models.Trancation
-    permission_required = 'ledger.view_ledger'
+    permission_required = 'ledger.view_all_trancations'
     template_name = 'ledger/all_trancation.html'
 
 

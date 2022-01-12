@@ -25,6 +25,11 @@
                         View Ledger
                     </a>
                 </li>
+                <li>
+                    <a class="dropdown-item" href="{%  url 'report:intrest-statement' client_id=client.id %}">
+                        Intrest Ledger
+                    </a>
+                </li>
             </ul>
         </li>
     {% endif %}
@@ -279,6 +284,7 @@
                         <p>
                             Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
                         <p>Intrest Rate: {{ client.intrest_rate }}</p>
+                        <p>Intrest Days: {{ client.intrest_day }}</p>
                         <p>Address: {{ client.address }}</p>
                     </div>
                     <div class="modal-footer">
