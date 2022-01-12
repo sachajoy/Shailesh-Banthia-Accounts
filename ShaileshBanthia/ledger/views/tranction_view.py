@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import (
     UpdateView,
     CreateView,
-    DeleteView
+    DeleteView,
+    ListView
 )
 from django.http import JsonResponse
 from .. import forms
@@ -105,6 +106,20 @@ class ClientTranctionDeleteView(LoginRequiredMixin, PermissionRequiredMixin,  De
         return reverse_lazy('ledger:detail-client', kwargs={
             'client_id': self.kwargs['client_id']
         })
+
+class TrancationListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = models.Trancation
+    permission_required = 'ledger.view_ledger'
+    template_name = 'ledger/all_trancation.html'
+
+
+    def handle_no_permission(self):
+        return redirect('permission-denied')
+
+    def get_queryset(self):
+        period = models.SelectedPeriod.objects.get(pk=self.request.user.id)
+        queryset =models.Trancation.objects.filter(booking_date__gte=period.start_date, booking_date__lte=period.end_date)
+        return queryset
 
 
 @login_required

@@ -14,6 +14,10 @@
                         <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
                            href="{% url 'ledger:index' %}">Dashboard</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
+                           href="{% url 'ledger:all-trancations' %}">All Trancations</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="firm" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
