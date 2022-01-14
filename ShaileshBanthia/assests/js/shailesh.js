@@ -1,5 +1,11 @@
 $(document).ready(function() {
-    $('#firm_list').DataTable();
+    var table = $('#firm_list').dataTable({
+
+    }).page('last');
+    //store reference in a variable say table here
+
 } );
+
+
 
 
