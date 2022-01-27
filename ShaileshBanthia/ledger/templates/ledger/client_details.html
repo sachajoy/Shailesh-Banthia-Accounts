@@ -202,7 +202,7 @@
     <hr />
     <table id="debitTable"
            style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
-           class="table table-condensed table-hover table-sm ">
+           class="table table-condensed table-hover table-sm table-bordered ">
         <thead>
         <tr>
             <th style="width: 5%; ">Amount</th>
@@ -322,20 +322,26 @@
             });
         }
 
-        $(document).ready(function () {
-            $('#creditTable').DataTable({
-                "ordering":false
-            });
+    $(document).ready(function () {
+        $('#creditTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                this.api().page('last').draw('page')
+            }
         });
-        $(document).ready(function () {
-            $('#debitTable').DataTable({
-                "ordering":false
-            });
+    });
+    $(document).ready(function () {
+        $('#debitTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                 this.api().page('last').draw('page')
+              }
         });
-        let root = document.getElementById('id_firm')
-        if (root != null){
-            root.classList.add("form-control");
-        }
+    });
+    let root = document.getElementById('id_firm')
+    if (root != null){
+        root.classList.add("form-control");
+    }
 
     </script>
 {% endblock %}

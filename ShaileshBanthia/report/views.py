@@ -71,3 +71,7 @@ def intrest_statement(request, client_id):
         'opening_intest': opening_intrest,
         'total_intrest': total_intrest
     })
+
+@login_required
+def selected_trancations(request, client_id):
+    pass
