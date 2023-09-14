@@ -1,0 +1,324 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <title>{{ tranctions.last.client.name | upper }} {{ tranctions.last.booking_date | date:'d-M-Y' | upper }}
+        </title>
+</head>
+<style>
+    .table-condensed > thead > tr > th,
+    .table-condensed > tbody > tr > th,
+    .table-condensed > tfoot > tr > th,
+    .table-condensed > thead > tr > td,
+    .table-condensed > tbody > tr > td,
+    .table-condensed > tfoot > tr > td {
+        padding: 1px;
+        font-size: 13px;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td {
+        font-weight: bolder;
+        background-color: #E8EAF6;
+    }
+
+    .table-striped > tbody > tr > th {
+        font-weight: bolder;
+        background-color: #1565C0;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n) > td {
+        font-weight: bolder;
+        background-color: #9FA8DA;
+    }
+</style>
+<body style="font-family: Calibri, sans-serif;">
+    <div style="margin-top: 5px; margin-bottom: 5px;">
+        {% if logo %}
+        <div style="width: 5%; float: left;">
+            <img style="width: 100px; height: 74px;" 
+            src="{% static 'images/shailesh_banthia_logo.png'%}" /></div>
+        {% endif %}
+        <div style="text-align: center; width: 95%; float: left; font-weight: BOLD;">
+            {% if name %}
+            <p>{{  tranctions.last.client.name |  upper }}</p>
+            {% endif %}
+            {% if period %}
+            <p style="margin: 0px;">PERIOD: {{ request.session.start_date }} TO {{ request.session.end_date }}</p>
+            <p>{{ tranctions.first.booking_date | date:"d-M-Y" | upper }} TO {{ tranctions.last.booking_date | date:'d-M-Y' | upper  }}</p>
+            {% endif %}
+        </div>
+    </div>
+<div style="margin-top: 10px;">
+    <table style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-bordered">
+        <tr style="text-align: center; color: white;">
+            <th style="width: 5%">AMOUNT</th>
+            <th style="width: 15%">SECTOR</th>
+            <th style="width: 18%">TRAVEL DATE</th>
+            {% if booking %}
+            <th style="width: 13%;" >BOOKING DATE</th>
+            {% endif %}
+            <th style="width: 57%">PASSENGER NAME</th>
+            {% if firm %}
+            <th>C</th>
+            {% endif %}
+            
+        </tr>
+        {% if opening_balance > 0 %}
+            <tr style="text-align: center; color: black;">
+                <td style="width: 5%;text-align: right; padding-right: 3px; font-weight: bolder;">{{ opening_balance }}</td>
+                <td colspan="2">OPENING BALANCE</td>
+                <td></td>
+                {% if firm %}
+                <td></td>
+                {% endif %}
+                {% if booking %}
+                <td></td>
+                {% endif %}
+
+            </tr>
+        {% endif %}
+
+        {% for t in tranctions %}
+            {% if t.amount > 0 %}
+                <tr>
+                    <td style=" width: 5%; text-align: right; padding-right: 3px; font-weight: bolder;"> {{ t.amount }}</td>
+                    <td style="width: 15%; text-align: center; font-weight:
+                    bolder;">{{ t.sector | upper }}</td>
+                    <td style="width: 18%;text-align: center; font-weight:
+                    bolder;">{{ t.date | upper }}</td>
+                    {% if booking %}
+                    <td style="text-align: center; width: 7%; font-weight:
+                    bolder;">{{ t.booking_date | date:"d-M-Y" | upper}}</td>
+                    {% endif %}
+                    <td style="width: 57%;text-align: center; font-weight:
+                    bolder;">{{ t.passenger_list | upper }}</td>
+                    {% if firm %}
+                    <td style="text-align: center; font-weight:
+                    bolder;">{{ t.firm | upper }}</td>
+                    {% endif %}
+                    
+                </tr>
+            {% endif %}
+        {% endfor %}
+        <tr style="border: 0px; background-color: #ffffff !important;">
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ total_due }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;">
+                TOTAL DUE
+            </td>
+        </tr>
+
+    </table>
+    {% if not total_rec and opening_balance < 0 %}
+    <table style="margin-top: 20px; padding-bottom: 0px; margin-bottom: 0px;"
+                class="table table-condensed table-sm table-bordered">
+
+             <tr style="text-align: center; border: 2px black solid">
+                 <th style="width: 5%">AMOUNT</th>
+                 <th style="width: 15%">SECTOR</th>
+                 <th style="width: 18%">DATE</th>
+                 <!-- {% if booking %}
+            <th style="width: 13%;">BOOKING DATE</th>
+            {% endif %} -->
+                 <th style="width: 62%">PASSENGER NAME</th>
+                 {% if firm %}
+                 <th>C</th>
+                 {% endif %}
+                 
+
+             </tr>
+             {% if opening_balance < 0 %}
+                 <tr style="text-align: center; color: black; border: 2px solid black;">
+                     <td style="width: 5%;text-align: right; padding-right: 3px; font-weight: bolder;">{{ opening_balance }}</td>
+                     <td colspan="2" style="font-weight: bolder;">OPENING
+                         BALANCE
+                     </td>
+                     <td></td>
+                    {% if firm %}
+                    <td></td>
+                    {% endif %}
+                    {% if booking %}
+            <td></td>
+            {% endif %}
+
+                </tr>
+             {% endif %}
+             <tr style="font-weight: bolder; border: 0px">
+                <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                    {{ total_rec }}
+                </td>
+                <td
+                        style="background-color: #ffffff !important;
+                        text-align: center;
+                        border: 0px;">
+                    TOTAL RECEIVED
+                </td>
+             </tr>
+             <tr style="font-weight: bolder; border: 0px">
+                 <td
+                     style="text-align: right;
+                     background-color: #ffffff !important;
+                     border-right: 0px;
+                     border-left: 0px;
+                     border-top: 2px solid black;
+                     border-bottom: 2px solid black;">{{ total }}</td>
+                 <td style=" text-align: center; border: 0px;">
+                     {% if total >= 0 %}
+                         TOTAL DUE
+                     {% else %}
+                         TOTAL ADVANCE
+                     {% endif %}
+                 </td>
+             </tr>
+             
+         </table>
+
+    {% endif %}
+    {% if total_rec %}
+        <table style="margin-top: 20px; padding-bottom: 0px; margin-bottom: 0px;
+   "
+               class="table table-condensed table-sm table-bordered">
+
+            <tr style="text-align: center; border: 2px black solid">
+                <th style="width: 5%">AMOUNT</th>
+                <th style="width: 15%">SECTOR</th>
+                <th style="width: 18%">DATE</th>
+                <!-- {% if booking %}
+            <th style="width: 13%;">BOOKING DATE</th>
+            {% endif %} -->
+                <th style="width: 62%">PASSENGER NAME</th>
+                {% if firm %}
+                <th style="width: 62%">C</th>
+                {% endif %}
+                
+
+            </tr>
+            {% if opening_balance < 0 %}
+                <tr style="text-align: center; color: black; border: 2px solid black;">
+                    <td style="width: 5%;text-align: right; padding-right: 3px; font-weight: bolder;">{{ opening_balance }}</td>
+                    <td colspan="2" style="font-weight: bolder;">OPENING
+                        BALANCE
+                    </td>
+                    <td></td>
+                    {% if firm %}
+                    <td></td>
+                    {% endif %}
+                    {% if booking %}
+            <td></td>
+            {% endif %}
+
+                </tr>
+            {% endif %}
+
+            {% for t in tranctions %}
+                {% if t.amount < 0 %}
+                    <tr style="border: 2px solid black;">
+                        <td style=" width: 5%; text-align: right; padding-right: 3px; font-weight: bolder;"> {{ t.amount }}</td>
+                        <td style="width: 15%; text-align: center; font-weight:
+                    bolder;">{{ t.sector | upper }}</td>
+                        <td style="width: 18%;text-align: center; font-weight:
+                    bolder;">{{ t.date  | upper }}</td>
+                    <!-- {% if booking %}
+                    <td style="text-align: center; width: 7%; font-weight:
+                    bolder;">{{ t.booking_date | date:"d-M-Y" }}</td>
+                    {% endif %} -->
+                        <td style="width: 62%; text-align: center; font-weight:
+                    bolder;">{{ t.passenger_list | upper }}</td>
+                    {% if firm %}
+                    <td style="text-align: center; font-weight:
+                    bolder;">{{ t.firm | upper }}</td>
+                    {% endif %}
+                    
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            <tr style="font-weight: bolder; border: 0px">
+                <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                    {{ total_rec }}
+                </td>
+                <td
+                        style="background-color: #ffffff !important;
+                        text-align: center;
+                        border: 0px;">
+                    TOTAL RECEIVED
+                </td>
+             </tr>
+            <tr style="font-weight: bolder; border: 0px">
+                <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">{{ total }}</td>
+                <td style=" text-align: center; border: 0px;">
+                    {% if total >= 0 %}
+                        TOTAL DUE
+                    {% else %}
+                        TOTAL ADVANCE
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+    {% endif %}
+
+
+    {% if firm_show %}
+        <table style=" margin-top: 20px; width: 30%; padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+        class="table table-condensed table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width: 25%; text-align: center; ">AMOUNT</th>
+                    <th style="width: 75%; text-align: center;">COMPANY NAME </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for firm in firm_details %}
+                    <tr>
+                        <td style="width: 5%; text-align: right; font-weight:
+                        bolder;">{{ firm.sum }} </td>
+                        <td style="width: 10%; text-align: center;font-weight:
+                        bolder;  ">{{firm.firm__name | upper}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>

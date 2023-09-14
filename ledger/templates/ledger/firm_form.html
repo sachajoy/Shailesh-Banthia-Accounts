@@ -1,0 +1,40 @@
+{% extends 'template.html' %}
+
+{% block title %} Firm Create/Update {% endblock %}
+{% block content %}
+
+<h1>Add New Firm</h1>
+<form method='post' class="col-md-6" novalidate>
+    {% csrf_token %}
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Name: </span>
+        <input type="text" class="form-control" name="name" value="{{form.name.value}}" 
+        placeholder="Name of Firm" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+    <div class="input-group  mb-3">
+        <span class="input-group-text" id="basic-addon1">Abs: </span>
+        <input type="text" class="form-control" name="abs" value="{{form.abs.value}}"
+        placeholder="Abrevation of Firm" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+    <!-- {{ form.as_p }} -->
+    <input type="submit" class="btn btn-success" value="Add New Firm" />
+</form>
+
+<hr>
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-danger">
+    <strong> {{field.name | upper }} : {{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

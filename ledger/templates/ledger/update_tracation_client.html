@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block title %} Update Trancation {% endblock %}
+{% block content %}
+
+<h1>Update Trancation</h1>
+<table class="table table-bordered">
+    <tr>
+        <td>Amount</td>
+        <td>Sector</td>
+        <td>Date</td>
+        <td>Passenger List</td>
+    </tr>
+    <tr>
+        <td>{{ object.amount }}</td>
+        <td>{{ object.sector }}</td>
+        <td>{{ object.date }}</td>
+        <td>{{ object.passenger_list }}</td>
+    </tr>
+</table>
+<form method='post' class="col-md-6" novalidate>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" class="btn btn-success" value="Update Trancation" />
+</form>
+
+<hr>
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-danger">
+    <strong> {{field.name | upper }} : {{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

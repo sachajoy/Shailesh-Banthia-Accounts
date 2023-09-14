@@ -1,0 +1,85 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <title>{{ client.name | upper }} {{ tran_last.booking_date | date:'d-M-Y' | upper}} INTEREST
+        </title>
+</head>
+<style>
+    .table-condensed > thead > tr > th,
+    .table-condensed > tbody > tr > th,
+    .table-condensed > tfoot > tr > th,
+    .table-condensed > thead > tr > td,
+    .table-condensed > tbody > tr > td,
+    .table-condensed > tfoot > tr > td {
+        padding: 1px;
+        font-size: 13px;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td {
+        font-weight: bolder;
+        background-color: #E8EAF6;
+    }
+
+    .table-striped > tbody > tr > th {
+        font-weight: bolder;
+        background-color: #1565C0;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n) > td {
+        font-weight: bolder;
+        background-color: #9FA8DA;
+    }
+</style>
+<body style="font-family: Calibri, sans-serif;">
+<div>
+     <table style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold; text-align: center"
+           class="table table-condensed table-sm table-striped table-bordered">
+
+        <tr style="text-align: center; color: white;">
+
+            <th>FROM</th>
+            <th>TO</th>
+            <th>AMOUNT</th>
+            <th>BALANCE</th>
+            <th>DAYS</th>
+            <th>INTREST AMOUNT</th>
+        </tr>
+
+        <tr>
+            <td>{{ opening_intest.start_date | date:'d-M-y' }}</td>
+            <td>{{ opening_intest.end_date | date:'d-M-y'}}</td>
+            <td>{{ opening_intest.amount }}</td>
+            <td>{{ opening_intest.balance }}</td>
+            <td>{{ opening_intest.days }}</td>
+            <td>{{ opening_intest.intrest }}</td>
+        </tr>
+        {% for trancation in trancations %}
+            <tr>
+                <td>{{ trancation.booking_date| date:'d-M-y' }}</td>
+                <td>{{ trancation.end_date | date:'d-M-y'}}</td>
+                <td>{{ trancation.amount }}</td>
+                <td>{{ trancation.balance }}</td>
+                <td>{{ trancation.days }}</td>
+                <td>{{ trancation.intrest }}</td>
+            </tr>
+        {% endfor %}
+        <tr style="background-color: white">
+            <td colspan="5" style="text-align: right; background-color: white"">Total</td>
+            <td style="background-color: white">{{ total_intrest }}</td>
+        </tr>
+
+    </table>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>

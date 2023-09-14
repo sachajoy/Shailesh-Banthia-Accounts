@@ -1,0 +1,58 @@
+{% extends 'template.html' %}
+
+{% block title %} Select Trancations {% endblock %}
+
+{% block content %}
+    <h3 class="mt-3">
+        {{ client.name }}
+    </h3>
+    <form method="post">
+    {% csrf_token %}
+    <table id="ledger" style=" padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-bordered table-hover">
+        <thead>
+        <tr style="color: white;">
+            <th style="width: 5%">Select</th>
+            <th style="width: 5%;">Amount</th>
+            <th style="width: 12.5%;">Sector</th>
+            <th style="width: 12.5%;">Date</th>
+            <th style="width: 10%;">Booking Date</th>
+            <th style="width: 40%;">Passenger Name</th>
+            <th style="width: 5%;">Balance</th>
+            <th style="width: 5%;">Firm</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tran in tranctions %}
+            <tr>
+            <td>
+                <input type="checkbox" class="form-check-input" name="selected" value="{{ tran.pk }}">
+            </td>
+                <td style="width: 5%; text-align: right">
+                    {{ tran.amount }}</td>
+                <td style="width: 10%;">{{ tran.sector }}</td>
+                <td style="width: 12%;">{{ tran.date }}</td>
+                <td>{{ tran.booking_date | date:'d-M-y'}}</td>
+                <td>{{ tran.passenger_list }}</td>
+                <td>
+                    {{ tran.balance }}
+                </td>
+                <td>{{ tran.firm }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" class="btn btn-success" value="Generate">
+    </form>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('#ledger').DataTable({
+                "ordering":false,
+                "lengthMenu": [[10, 25, 50, 75, 100, 150, 200, -1], [10, 25, 50, 75, 100, 150, 200, "All"] ],
+                "pageLength": 20
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends 'template.html' %}
+
+{% block title %} Select Trancations {% endblock %}
+
+{% block content %}
+    
+    <form method="post" class="form">
+    {% csrf_token %}
+        <!-- {{ client_id }} -->
+    From: <input type="date" name="from" id="from" required {% if from_date %} value="{{from_date}}" {% endif %}>
+    To: <input type="date" name="to" id="to`" required {% if to_date %} value="{{to_date}}" {% endif %}>
+        <select id="client" name="client">
+            <option value="-1" {% if client_id == -1 %} selected {% endif %}>ALL CLIENT</option>
+            {% if client_id == -1 %} -1 {% endif %}
+            {% for client in clients %}
+                <option value="{{client.id}}" {% if client_id == client.id %} selected {% endif %} >{{ client.name | upper}}</option>
+                {% if client_id == client.id %} {{client_id}} {% endif %}
+            {% endfor %}
+            </select>
+            <select id="firm" name="firm">
+                <option value="-1" {% if firm_id == -1 %} selected {% endif %}>ALL FIRM</option>
+                {% if firm_id == -1 %} -1 {% endif %}
+                {% for firm in firms %}
+                    <option value="{{firm.id}}" {% if firm_id == firm.id %} selected {% endif %} >{{ firm.name | upper}}</option>
+                    {% if firm_id == firm.id %} {{firm_id}} {% endif %}
+                {% endfor %}
+                </select>
+    <input type="submit" class="btn btn-success" value="Generate" />
+    
+    </form>
+    <!-- <table style="padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table">
+        <tr>
+            <td width="25%">
+                Opening Balance:
+
+                {% if context.opening_balance %}
+                    {{ context.opening_balance }}
+                
+                {% endif %}
+            </td>
+            <td width="25%">
+                Closing Balance:
+                {% if context.closing_balance %}
+                    {{ context.closing_balance }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+        </tr>
+    </table> -->
+    <table id="creditTable"
+           style="font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-bordered table-hover">
+
+
+        <thead>
+        <tr style="color: white;">
+            <th>Amount</th>
+                    <th>Sector</th>
+                    <th>Date</th>
+                    <th>Booking Date</th>
+                    <th>Passenger Name</th>
+                    <th>Firm</th>
+
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+            
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for trancation in tranctions %}
+            {% if trancation.amount > 0 %}
+                <tr>
+                    <td>
+                        <a href="{% url 'ledger:detail-client' client_id=trancation.client.id %}">
+                        {{ trancation.amount }}
+                            </a>
+                    </td>
+                    <td>{{ trancation.sector | upper }}</td>
+                    <td>{{ trancation.date | upper }}</td>
+                    <td>{{ trancation.booking_date | date:'d-M-y' | upper }}</td>
+                    <td>{{ trancation.passenger_list | upper }}</td>
+                    <td>{{ trancation.firm | upper }}</td>
+
+                    <td>{{ trancation.client.name| upper  }}</td>
+                    <td> {{ trancation.client.mobile_number| upper  }}</td>
+
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tr>
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ context.total_payment_due }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;" colspan="2">
+                TOTAL DUE
+            </td>
+        </tr>
+
+    </table>
+    <hr />
+    <table id="debitTable"
+           style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+           class="table table-condensed table-hover table-sm table-bordered ">
+        <thead>
+        <tr>
+            <th>Amount</th>
+                    <th>Sector</th>
+                    <th>Date</th>
+                    <th>Booking Date</th>
+                    <th>Passenger Name</th>
+                    <th>Firm</th>
+
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trancation in tranctions %}
+            {% if trancation.amount < 0 %}
+                <tr>
+                    <td>
+                        <a href="{% url 'ledger:detail-client' client_id=trancation.client.id %}">
+                        {{ trancation.amount | upper  }}
+                            </a>
+                    </td>
+                    <td>{{ trancation.sector | upper  }}</td>
+                    <td>{{ trancation.date | upper  }}</td>
+                    <td>{{ trancation.booking_date | date:'d-M-y' | upper }}</td>
+                    <td>{{ trancation.passenger_list | upper }}</td>
+                    <td>{{ trancation.firm | upper }}</td>
+
+                    <td>{{ trancation.client.name | upper  }}</td>
+                    <td> {{ trancation.client.mobile_number | upper  }}</td>
+
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tr>
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ context.recipt }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;" colspan="2">
+                TOTAL RECEIVED
+            </td>
+        </tr>
+
+        <tr style="font-weight: bolder; border: 0px">
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">{{ context.total }}</td>
+            <td style=" text-align: center; border: 0px; padding-left: 6px" colspan="2">
+                {% if context.total >= 0 %}
+                    TOTAL DUE
+                {% else %}
+                    TOTAL ADVANCE
+                {% endif %}
+            </td>
+        </tr>
+
+    </table>
+    
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+        $('#creditTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                this.api().page('last').draw('page')
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#debitTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                 this.api().page('last').draw('page')
+              }
+        });
+    });
+        $(document).ready(function () {
+            $('#ledger').DataTable({
+                "ordering":false
+            });
+        });
+    </script>
+{% endblock %}

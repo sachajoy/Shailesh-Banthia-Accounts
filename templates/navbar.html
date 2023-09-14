@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'ledger:index' %}">Shailesh Banthia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
+                           href="{% url 'ledger:index' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
+                           href="{% url 'ledger:all-trancations' %}">All Trancations</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="firm" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Firm
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="firm">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'ledger:create-firm' %}">
+                                    Add New
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'ledger:list-firm' %}">
+                                    List of Firms
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'ledger:list-firm' %}">
+                                    Update Firm
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="firm" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Client
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="firm">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'ledger:create-client' %}">
+                                    Add New
+                                </a>
+                            </li>
+                            {% block client_extra_dropdown_options %}
+                            {% endblock %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if dashboard %} active {% endif %}" aria-current="page"
+                           href="{% url 'report:day-report' %}">Day Report</a>
+                    </li>
+                    {% block extra_nav_tabs %}
+
+                    {% endblock %}
+                    
+                </ul>
+                <span class="navbar-text">
+                    <div class="dropdown">
+                        <a href="{% url 'ledger:select-firm' %}" style="text-decoration: none;">
+                            {% if request.session.firm_name %}
+                            {{ request.session.firm_name }}
+                            {% else %}
+                            Firm Not Set.
+                            {% endif %}&nbsp;
+                        </a>
+                        <a href="{% url 'ledger:set-period' pk=user.id %}" style="text-decoration: none;">
+                            {%  if request.session.start_date %}
+                            {{ request.session.start_date }} - {{ request.session.end_date }}
+                            {% else %}
+                            Period not set.
+                            {% endif %}
+                        </a>
+                        &nbsp;
+                        <a class="dropdown-toggle" type="button" style="text-decoration: none;" id="profile"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.username}}
+                        </a>
+                   
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profile">
+                            <li>
+                                <a class="dropdown-item" type="button" href="{% url 'logout' %}">
+                                    Logout
+                                </a>
+                            </li>
+                            <li><a class="dropdown-item" type="button" href="{% url 'authentication:create-user' %}">Create New User</a></li>
+                            <li><a class="dropdown-item" type="button" href="{% url 'authentication:list-user' %}">List of User</a></li>
+                            <li><a class="dropdown-item" type="button" href="{% url 'password_change' %}">Change
+                                Password</a></li>
+                        </ul>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </nav>
+{% endblock %}

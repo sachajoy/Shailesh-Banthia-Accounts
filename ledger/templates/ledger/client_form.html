@@ -1,0 +1,70 @@
+{% extends 'template.html' %}
+{% load ledger_extras %}
+{% block content %}
+<div class="row">
+    <h3 class="mt-2">Add New Client</h3>
+    <form method='post' class="col-md-6">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Name: </span>
+            <input type="text" class="form-control" name="name" 
+            {% if form.name.value is not None %} value="{{form.name.value}}" {% endif %} 
+            placeholder="Name of Client" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Mobile Number: </span>
+            <input type="text" class="form-control" name="mobile_number" 
+            {% if form.mobile_number.value is not None %}value="{{form.mobile_number.value}}" {% endif %} 
+            placeholder="Mobile Number" aria-label="Username"
+                aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Intrest Status: &nbsp &nbsp
+                <input type="checkbox" class="form-check-input" name="intrest_status" 
+                {% if  form.intrest_status.value %} checked {% endif %} placeholder="Name of Client"
+                    aria-label="Username" aria-describedby="basic-addon1">
+            </span>
+
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Intrest Rate: </span>
+            <input type="number" class="form-control" name="intrest_rate" 
+            {% if form.intrest_rate is not None %}value="{{form.intrest_rate.value}}" {% endif %} 
+            placeholder="Intrest Rate" aria-label="Username"
+                aria-describedby="basic-addon1">
+        </div>
+    <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Intrest Days: </span>
+            <input type="number" class="form-control" name="intrest_day"
+            {% if form.intrest_day is not None %}value="{{form.intrest_day.value}}" {% endif %}
+            placeholder="Intrest Days" aria-label="Username"
+                aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Address: </span>
+            <input type="text" class="form-control" name="address" 
+            {% if form.address.value is not None %}value="{{form.address.value}}" {% endif %} 
+                placeholder="Address" aria-label="Address"
+                aria-describedby="basic-addon1">
+        </div>
+
+        <input type="submit" class="btn btn-success" value="Add/Update New Client" />
+    </form>
+    <div class="col-md-6">
+        {% if form.errors %}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+            <strong> {{field.name | upper }} : {{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

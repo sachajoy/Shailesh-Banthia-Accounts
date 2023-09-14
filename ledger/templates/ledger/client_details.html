@@ -1,0 +1,439 @@
+{% extends 'template.html' %}
+{% load static %}
+{% block title %} Client Details {% endblock %}
+{% block client_extra_dropdown_options %}
+    {% if perms.ledger.change_client %}
+        <li>
+            <a class="dropdown-item" href="{% url 'ledger:update-client' pk=client.id %}">
+                Update Client
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}
+{% block extra_nav_tabs %}
+    {% if perms.ledger.view_ledger %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+               href="#" id="ledger" role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+                Ledger
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="ledger">
+                <li>
+                    <a class="dropdown-item" href="{%  url 'ledger:ledger-client' client_id=client.id %}">
+                        View Ledger
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{%  url 'report:intrest-statement' client_id=client.id %}">
+                        Intrest Ledger
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{%  url 'report:selected-entry-statement' client_id=client.id %}">
+                        Selected Trancations Ledger
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <!-- Client name and actions -->
+    <h4 class="mt-2">{{ client.name }}
+        {% if perms.ledger.view_client %}
+            <a type="button" data-bs-toggle="modal" data-bs-target="#client_details">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill"
+                     viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
+                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+                </svg>
+            </a>
+        {% endif %}
+    </h4>
+    {% if perms.ledger.add_trancation %}
+        <form method="post" style="margin-top: 10px;">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="number" name="amount" placeholder="Amount"
+                            {% if form.amount.value is not None %} value="{{ form.amount.value }}" {% endif %} />
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="sector" placeholder="Sector"
+                            {% if form.sector.value %} value="{{ form.sector.value }}" {% endif %}/>
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="date" placeholder="Date"
+                            {% if form.date.value %} value="{{ form.date.value }}" {% endif %}/>
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <input type="date" class="form-control" name="booking_date"
+                            {% if form.booking_date.value is not None %}
+                           value="{{ form.booking_date.value |  date:'Y-m-d' }}"  {% endif %}
+                           placeholder="Booking Date"/>
+                </div>
+                <div class="col-5" style="padding: 0px; margin: 0px;">
+                    <input class="form-control" type="text" name="passenger_list" placeholder="Passenger List"
+                            {% if form.passenger_list.value %} value="{{ form.passenger_list.value }}" {% endif %}/>
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="remarks" placeholder="Remarks"
+                                {% if form.remarks.value %} value="{{ form.remarks.value }}" {% endif %}/>
+
+                    </div>
+
+                </div>
+                <div class="col-1" style="padding: 0px; margin: 0px;">
+                    {{ form.firm }}
+                </div>
+                <div class="col-1">
+                    <input type="submit" class="btn btn-success" value="SUBMIT">
+                    {% if is_update_client %}
+                    <a href="{% url 'ledger:update-trancation' pk=trancation_id %}" class="btn btn-primary">UC</a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </form>
+    {% endif %}
+    <table style="padding-bottom: 0px; margin-bottom: 0px; font-weight: bold;"
+           class="table">
+        <tr>
+            <td width="25%">
+                Opening Balance:
+
+                {% if opening_balance %}
+                    {{ opening_balance }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+            <td width="25%">
+                Closing Balance:
+                {% if closing_balance %}
+                    {{ closing_balance }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <div class="col-md-6">
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong> {{ field.name | upper }} : {{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <table id="creditTable"
+           style="font-weight: bold;"
+           class="table table-condensed table-sm table-striped table-bordered table-hover">
+
+
+        <thead>
+        <tr style="color: white;">
+            <th>No.</th>
+            <th style="width: 5%; ">AMOUNT</th>
+            <th style="width: 10%;">SECTOR</th>
+            <th style="width: 10%;">DATE</th>
+            <th style="width: 8%;">BOOKING DATE</th>
+            <th style="width: 47%;">PASSENGER NAME</th>
+            <th style="width: 15%;">REMARKS</th>
+            <th style="">C</th>
+            <th style="">V</th>
+            <th style="">D</th>
+            <th style="">N</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for trancation in tranctions %}
+            {% if trancation.amount > 0 %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td style="width: 5%; text-align: right;">
+                        <a
+                                href="{% url 'ledger:detail-client-udpate-tranction' client_id=client.id pk=trancation.id %}">
+                            {{ trancation.amount }}
+                        </a>
+                    </td>
+                    <td style="width: 10%;">{{ trancation.sector| upper }}</td>
+                    <td style="width: 10%;">{{ trancation.date | upper}}</td>
+                    <td style="width: 8%;">
+                        {{ trancation.booking_date|date:'d-M-y'| upper }}</td>
+                    <td style="width: 47%;">{{ trancation.passenger_list| upper }}</td>
+                    <td style="width: 15%;">{{ trancation.remarks | upper}}</td>
+                    <td style="width: 10%;">{{ trancation.firm.abs| upper }}</td>
+                    <td style="width: 5%;">
+                        <a href="#"
+                           onclick="verfiyEntry({{ client.id }},{{ trancation.id }}, this)"
+                           class="btn {% if trancation.verifed %}
+                        btn-success {% else %} btn-danger
+                    {% endif %} "></a>
+                    </td>
+                    <td>
+                        <a class="btn btn-close"
+                           href="{% url 'ledger:delete-client-tranction' client_id=client.id pk=trancation.id %}">
+                        </a>
+                    </td>
+                    <td>
+                        <a hjref="#" class="btn btn-info open-modal" onclick="tallyNaration('{{trancation.passenger_list}}', '{{trancation.sector}}', '{{trancation.date}}', '{{trancation.remarks}}')" ></a>
+
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tr>
+            <td></td>
+
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ total_payment_due }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;" colspan="2">
+                TOTAL DUE
+            </td>
+        </tr>
+
+    </table>
+    <hr />
+    <table id="debitTable"
+           style=" padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+           class="table table-condensed table-hover table-sm table-bordered ">
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th style="width: 5%; ">AMOUNT</th>
+            <th style="width: 10%;">SECTOR</th>
+            <th style="width: 10%;">DATE</th>
+            <th style="width: 8%;">BOOKING DATE</th>
+            <th style="width: 47%;">PASSENGER NAME</th>
+            <th style="width: 15%;">REMARKS</th>
+            <th style="">C</th>
+            <th style="">V</th>
+            <th style="">D</th>
+            <th style="">N</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trancation in tranctions %}
+            {% if trancation.amount < 0 %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td style="width: 5%; text-align: right;">
+                        <a
+                                href="{% url 'ledger:detail-client-udpate-tranction' client_id=client.id pk=trancation.id %}">
+
+                            {{ trancation.amount }}
+                        </a>
+                    </td>
+                    <td style="width: 10%;">{{ trancation.sector | upper}}</td>
+                    <td style="width: 10%;">{{ trancation.date | upper}}</td>
+                    <td style="width: 8%;">
+                        {{ trancation.booking_date|date:'d-M-y' | upper}}</td>
+                    <td style="width: 47%;">{{ trancation.passenger_list| upper }}</td>
+                    <td style="width: 15%;">{{ trancation.remarks | upper}}</td>
+                    <td style="width: 10%;">{{ trancation.firm.abs | upper}}</td>
+                    <td style="width: 5%;">
+                        <a href="#"
+                           onclick="verfiyEntry({{ client.id }},{{ trancation.id }}, this)"
+                           class="btn {% if trancation.verifed %}
+                        btn-success {% else %} btn-danger
+                    {% endif %} "></a>
+                    </td>
+                    <td>
+                        <a class="btn btn-close"
+                           href="{% url 'ledger:delete-client-tranction' client_id=client.id pk=trancation.id %}">
+                        </a>
+                    </td>
+                    <td>
+                        <a hjref="#" class="btn btn-info open-modal" onclick="tallyNaration('{{trancation.passenger_list}}', '{{trancation.sector}}', '{{trancation.date}}', '{{trancation.remarks}}')" ></a>
+
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tr>
+            <td></td>
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">
+                {{ recipt }}
+            </td>
+            <td
+                    style="background-color: #ffffff !important;
+                    text-align: center;
+                    border: 0px;" colspan="2">
+                TOTAL RECEIVED
+            </td>
+        </tr>
+
+        <tr style="font-weight: bolder; border: 0px">
+            <td></td>
+            <td
+                    style="text-align: right;
+                    background-color: #ffffff !important;
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;">{{ total }}</td>
+            <td style=" text-align: center; border: 0px; padding-left: 6px" colspan="2">
+                {% if total >= 0 %}
+                    TOTAL DUE
+                {% else %}
+                    TOTAL ADVANCE
+                {% endif %}
+            </td>
+        </tr>
+
+    </table>
+
+    {% if perms.ledger.view_client %}
+        <!-- Model for client details and update -->
+        <div class="modal fade" id="client_details" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Client Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Name: {{ client.name }}</p>
+                        <p>Mobile Number: {{ client.mobile_number }}</p>
+                        <p>
+                            Intrest Status: {% if client.intrest_status %} On {% else %} Off {% endif %}</p>
+                        <p>Intrest Rate: {{ client.intrest_rate }}</p>
+                        <p>Intrest Days: {{ client.intrest_day }}</p>
+                        <p>Address: {{ client.address }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a type="button" href="{% url 'ledger:update-client' pk=client.id %}"
+                           class="btn btn-success">Update</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <table style="width: 20%; padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+    class="table table-condensed table-hover table-bordered ">
+        <thead>
+            <tr>
+                <th style="width: 25%;  ">AMOUNT</th>
+                <th style="width: 75%;">COMPANY NAME </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for firm in firm_details %}
+                <tr>
+                    <td style="width: 5%; text-align: right;">{{ firm.sum }} </td>
+                    <td style="width: 10%;">{{firm.firm__name | upper}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<!----modal starts here--->
+<div id="modal" class="modal fade" tabindex="-1" aria-labelledby="tally-naration" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tally Naration</h4>
+            </div>
+            <div class="modal-body" id= "modal-body">
+                <p>Here the description starts here........</p>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+      </div>
+  </div>
+<!--Modal ends here--->
+    
+{% endblock %}
+
+{% block script %}
+    <script>
+        function tallyNaration(passenger, sector, date, remarks) {
+            // console.log('passenger list: ' + passenger)
+            $(document).on("click", ".open-modal", function () {
+            var myHeading = `<p id='tallyNarationString'> ${passenger.toUpperCase()} ${sector.toUpperCase()} ${date.toUpperCase()} REF: ${remarks.toUpperCase()} </p>`;
+            // navigator.clipboard.writeText(`${passenger} ${sector} ${date} ${remarks}`)
+            $("#modal-body").html(myHeading );     
+            $('#modal').modal('show');
+            });
+        }
+        
+    function verfiyEntry(client_id, id, ele){
+            $.ajax({
+                url: 'client/trancation/verfiy',
+                type:"POST",
+                data: {
+                    'csrfmiddlewaretoken':"{{ csrf_token }}",
+                    'trancation_id':id
+                },
+                success: function (result) {
+                    {#console.log(result)#}
+                    if(result.result === true){
+                        $(ele).removeClass('btn-danger')
+                        $(ele).addClass('btn-success')
+                    }else{
+                        $(ele).removeClass('btn-success');
+                        $(ele).addClass('btn-danger');
+                    }
+                }
+
+            });
+        }
+
+    $(document).ready(function () {
+        $('#creditTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                this.api().page('last').draw('page')
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#debitTable').DataTable({
+            "ordering":false,
+            initComplete: function(){
+                 this.api().page('last').draw('page')
+              }
+        });
+    });
+    let root = document.getElementById('id_firm')
+    if (root != null){
+        root.classList.add("form-control");
+    }
+
+    </script>
+{% endblock %}

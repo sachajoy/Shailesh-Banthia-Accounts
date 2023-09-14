@@ -1,0 +1,77 @@
+{% extends 'template.html' %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <table id="dashboard_table" class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Amount ({{ total.total }})</th>
+
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Amount</th>
+
+                </tr>
+                </tfoot>
+                <tbody>
+                    {% for client in clients %}
+                
+                        <tr style="font-weight: bolder;">
+                            <td style="width: 30px;;">{{client.id}}</td>
+                            <td>
+                                <a class="btn-sm" href="{% url 'ledger:detail-client' client_id=client.id %}">
+                                    {{ client.name }}
+                                </a>
+                            </td>
+                            <td> {{ client.mobile_number }}</td>
+                            <td style="color: {% if client.val > 0 %} red {% else %} green {% endif %}">
+                                {% if client.val is not None %}
+                                    {{ client.val }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <table style="width: 20%; padding-bottom: 0px; margin-bottom: 0px; border: 2px solid black;"
+    class="table table-condensed table-hover table-bordered ">
+        <thead>
+            <tr>
+                <th style="width: 25%;  ">AMOUNT</th>
+                <th style="width: 75%;">COMPANY NAME </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for firm in firm_details %}
+                <tr>
+                    <td style="width: 5%; text-align: right;">{{ firm.sum }} </td>
+                    <td style="width: 10%;">{{firm.firm__name | upper}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('#dashboard_table').DataTable({
+                order: [[1, 'asc']]
+               
+            });
+        });
+    </script>
+{% endblock %}

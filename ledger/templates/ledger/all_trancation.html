@@ -1,0 +1,94 @@
+{% extends 'template.html' %}
+
+{% block title %} All Trancations {% endblock %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <table id="firm_list" class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Sector</th>
+                    <th>Date</th>
+                    <th>Booking Date</th>
+                    <th>Passenger Name</th>
+                    <th>Remarks</th>
+                    <th>C</th>
+                    <th>Name</th>
+                    <th>N</th>
+
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>Amount</th>
+                    <th>Sector</th>
+                    <th>Date</th>
+                    <th>Booking Date</th>
+                    <th>Passenger Name</th>
+                    <th>Remarks</th>
+                    <th>C</th>
+                    <th>Name</th>
+                    <th>N</th>
+                </tr>
+                </tfoot>
+                <tbody>
+                {% for trancation in trancation_list %}
+
+                    <tr style="font-weight: bolder;">
+                        <td>
+                            <a href="{% url 'ledger:detail-client' client_id=trancation.client.id %}">
+                            {{ trancation.amount }}
+                                </a>
+                        </td>
+                        <td>{{ trancation.sector }}</td>
+                        <td>{{ trancation.date }}</td>
+                        <td>{{ trancation.booking_date | date:'d-M-y' }}</td>
+                        <td>{{ trancation.passenger_list }}</td>
+                        <td>{{ trancation.remarks }}</td>
+                        <td>{{ trancation.firm }}</td>
+                        <td>{{ trancation.client.name }}</td>
+                        <td>
+                            <a hjref="#" class="btn btn-info open-modal" onclick="tallyNaration('{{trancation.passenger_list}}', '{{trancation.sector}}', '{{trancation.date}}', '{{trancation.remarks}}')" ></a>
+    
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!----modal starts here--->
+<div id="modal" class="modal fade" tabindex="-1" aria-labelledby="tally-naration" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tally Naration</h4>
+            </div>
+            <div class="modal-body" id= "modal-body">
+                <p>Here the description starts here........</p>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+      </div>
+  </div>
+<!--Modal ends here--->
+{% endblock %}
+
+{% block script %}
+    <script>
+        function tallyNaration(passenger, sector, date, remarks) {
+            // console.log('passenger list: ' + passenger)
+            $(document).on("click", ".open-modal", function () {
+            var myHeading = `<p id='tallyNarationString'> ${passenger.toUpperCase()} ${sector.toUpperCase()} ${date.toUpperCase()} REF: ${remarks.toUpperCase()} </p>`;
+            // navigator.clipboard.writeText(`${passenger} ${sector} ${date} ${remarks}`)
+            $("#modal-body").html(myHeading );     
+            $('#modal').modal('show');
+            });
+        }
+    </script>
+{% endblock %}

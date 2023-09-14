@@ -1,0 +1,18 @@
+{% extends 'template.html' %}
+
+{% block title %} Select Firm {% endblock %}
+
+{% block content %}
+    <h3 class="mt-3"> Select Firm </h3>
+    <form action="{% url 'ledger:select-firm' %}" method="post">
+    {% csrf_token %}
+    <select name="firm" class="form-control col-4">
+        <option value="0" >All Company</option>
+        {% for firm in firms %}
+            <option value="{{ firm.id }}"> {{ firm.name }}</option>
+        {% endfor %}
+
+    </select>
+    <input type="submit" class="btn btn-success" value="Select Firm">
+    </form>
+{% endblock %}
